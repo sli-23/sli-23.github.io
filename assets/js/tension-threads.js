@@ -1,1 +1,315 @@
-!function(){"use strict";function t(){if(!(s=document.getElementById("homepage-hero")))return;p=s.querySelector(".artwork-container");const t=s.querySelector("#red-threads");t&&(d=Array.from(t.querySelectorAll("path")),e(),o(),u||a())}function e(){const t=document.createElementNS("http://www.w3.org/2000/svg","svg");t.classList.add("thread-extensions"),t.setAttribute("aria-hidden","true"),s.appendChild(t);const e=p.getBoundingClientRect(),o=s.getBoundingClientRect(),n=o.width,a=o.height,i=e.left-o.left,d=e.top-o.top,h=e.width,u=e.height;g.forEach(e=>{const o=i+e.x*h,s=d+e.y*u,p=Math.sqrt(e.outDirX*e.outDirX+e.outDirY*e.outDirY),g=e.outDirX/p,X=e.outDirY/p;let Y,m,l=Infinity;if(g>.001){const t=(n-o)/g;t>0&&t<l&&(l=t)}if(g<-.001){const t=-o/g;t>0&&t<l&&(l=t)}if(X>.001){const t=(a-s)/X;t>0&&t<l&&(l=t)}if(X<-.001){const t=-s/X;t>0&&t<l&&(l=t)}if(l===Infinity)return;Y=o+g*l,m=s+X*l;const M=Math.sqrt((Y-o)**2+(m-s)**2);if(M<30)return;const f=-X,x=g,y=.015*M,w=e.outDirX*e.outDirY>0?1:-1,C=o+g*M*.33+f*y*w,E=s+X*M*.33+x*y*w,D=o+g*M*.66+f*y*w,A=s+X*M*.66+x*y*w,b=5,v=[];for(let e=0;e<b;e++){const o=document.createElementNS("http://www.w3.org/2000/svg","path"),r=.7+.3*(e/(b-1));o.setAttribute("stroke-width",r.toFixed(2)),o.setAttribute("stroke","#d51515"),o.setAttribute("fill","none"),o.setAttribute("stroke-linecap","round"),t.appendChild(o),v.push(o)}const F=[],q=4+Math.floor(3*Math.random()),k=-X,$=g;for(let e=0;e<q;e++){const r=document.createElementNS("http://www.w3.org/2000/svg","line"),n=.8*(e-q/2)+.5*(Math.random()-.5),a=o+g*n,i=s+X*n,p=4+4*Math.random();r.setAttribute("x1",(a+k*p/2).toFixed(1)),r.setAttribute("y1",(i+$*p/2).toFixed(1)),r.setAttribute("x2",(a-k*p/2).toFixed(1)),r.setAttribute("y2",(i-$*p/2).toFixed(1)),r.setAttribute("stroke","var(--figure-color, #1a1a1a)"),r.setAttribute("stroke-width",(.5+.3*Math.random()).toFixed(2)),r.setAttribute("stroke-linecap","round"),r.style.opacity=1,t.appendChild(r),F.push(r)}c.push({paths:v,scratches:F,startX:o,startY:s,endX:Y,endY:m,cp1X:C,cp1Y:E,cp2X:D,cp2Y:A,origCp1X:C,origCp1Y:E,origCp2X:D,origCp2Y:A}),r(c[c.length-1])})}function o(){d.forEach(t=>{const e=18+12*Math.random(),o=5*Math.random();gsap.to(t,{x:.5*(Math.random()-.5),y:.4*(Math.random()-.5),duration:e,repeat:-1,yoyo:!0,delay:o,ease:"sine.inOut"})}),c.forEach(t=>{const e=t.endX-t.startX,o=t.endY-t.startY,r=Math.sqrt(e*e+o*o);t.perpX=-o/r,t.perpY=e/r,t.origEndX=t.endX,t.origEndY=t.endY;const n=Math.abs(e)>Math.abs(o),a=n?2.5:1;t.wave={amp1:(8+6*Math.random())*a,amp2:(10+8*Math.random())*a,ampEnd:(12+6*Math.random())*a,speed1:(.4+.3*Math.random())*(n?1.3:1),speed2:(.3+.25*Math.random())*(n?1.3:1),speedEnd:(.2+.15*Math.random())*(n?1.2:1),phase1:Math.random()*Math.PI*2,phase2:Math.random()*Math.PI*2,phaseEnd:Math.random()*Math.PI*2}}),gsap.ticker.add(function(){const t=Date.now()/1e3;c.forEach(e=>{const o=e.wave,n=Math.sin(t*o.speed1+o.phase1),a=Math.sin(t*o.speed2+o.phase2),i=Math.sin(t*o.speedEnd+o.phaseEnd);e.cp1X=e.origCp1X+e.perpX*n*o.amp1,e.cp1Y=e.origCp1Y+e.perpY*n*o.amp1,e.cp2X=e.origCp2X+e.perpX*a*o.amp2,e.cp2Y=e.origCp2Y+e.perpY*a*o.amp2,e.endX=e.origEndX+e.perpX*i*o.ampEnd,e.endY=e.origEndY+e.perpY*i*o.ampEnd,r(e)})})}function r(t){const e=t.paths.length;for(let o=0;o<e;o++){const r=o/e,a=(o+1)/e,i=n(t,r),s=n(t,a),p=n(t,r+.33*(a-r)),d=n(t,r+.66*(a-r));t.paths[o].setAttribute("d",`M${i.x.toFixed(1)},${i.y.toFixed(1)} C${p.x.toFixed(1)},${p.y.toFixed(1)} ${d.x.toFixed(1)},${d.y.toFixed(1)} ${s.x.toFixed(1)},${s.y.toFixed(1)}`)}}function n(t,e){const o=1-e;return{x:o*o*o*t.startX+3*o*o*e*t.cp1X+3*o*e*e*t.cp2X+e*e*e*t.endX,y:o*o*o*t.startY+3*o*o*e*t.cp1Y+3*o*e*e*t.cp2Y+e*e*e*t.endY}}function a(){let t=!1;s.addEventListener("mousemove",e=>{const o=s.getBoundingClientRect();h.x=e.clientX-o.left,h.y=e.clientY-o.top,t||(t=!0,requestAnimationFrame(()=>{i(),t=!1}))}),s.addEventListener("mouseleave",()=>{h.x=-9999,h.y=-9999,c.forEach(t=>{gsap.to(t,{cp1X:t.origCp1X,cp1Y:t.origCp1Y,cp2X:t.origCp2X,cp2Y:t.origCp2Y,duration:2.5,ease:"elastic.out(1, 0.3)",overwrite:"auto",onUpdate:()=>r(t)})})})}function i(){const t=70,e=3;c.forEach(o=>{const n=o.cp1X-h.x,a=o.cp1Y-h.y,i=Math.sqrt(n*n+a*a),s=o.cp2X-h.x,p=o.cp2Y-h.y,d=Math.sqrt(s*s+p*p);if(i<t&&i>0){const s=(1-i/t)*e,p=Math.atan2(a,n);gsap.to(o,{cp1X:o.origCp1X+Math.cos(p)*s,cp1Y:o.origCp1Y+Math.sin(p)*s,duration:.6,ease:"power2.out",overwrite:"auto",onUpdate:()=>r(o)})}if(d<t&&d>0){const n=(1-d/t)*e,a=Math.atan2(p,s);gsap.to(o,{cp2X:o.origCp2X+Math.cos(a)*n,cp2Y:o.origCp2Y+Math.sin(a)*n,duration:.6,ease:"power2.out",overwrite:"auto",onUpdate:()=>r(o)})}})}let s,p,d=[],c=[],h={x:-9999,y:-9999},u=window.innerWidth<768;const g=[{x:.809,y:.005,outDirX:.617,outDirY:-.787},{x:0,y:.3,outDirX:-.957,outDirY:-.291},{x:0,y:.476,outDirX:-.999,outDirY:-.047},{x:1,y:.225,outDirX:1,outDirY:0},{x:1,y:.543,outDirX:.998,outDirY:.06},{x:.184,y:1,outDirX:-.424,outDirY:.906}];document.addEventListener("DOMContentLoaded",t)}();
+(function () {
+  'use strict';
+
+  let heroEl, artworkContainer;
+  let threadPaths = [];
+  let extensions = [];
+  let mouse = { x: -9999, y: -9999 };
+  let isMobile = window.innerWidth < 768;
+
+  // Edge connection points where trajectories exit the artwork frame.
+  // Expressed as percentage of artwork dimensions (0-1).
+  // outDir = direction the line travels OUTWARD from the artwork.
+  const EDGE_POINTS = [
+    // TOP — only right one
+    { x: 0.809, y: 0.005, outDirX: 0.617, outDirY: -0.787 },
+    // LEFT
+    { x: 0.000, y: 0.300, outDirX: -0.957, outDirY: -0.291 },
+    { x: 0.000, y: 0.476, outDirX: -0.999, outDirY: -0.047 },
+    // RIGHT — smoother directions, less abrupt angles
+    { x: 1.000, y: 0.225, outDirX: 1.000, outDirY: 0.000 },
+    { x: 1.000, y: 0.543, outDirX: 0.998, outDirY: 0.060 },
+    // BOTTOM
+    { x: 0.184, y: 1.000, outDirX: -0.424, outDirY: 0.906 },
+  ];
+
+  function init() {
+    heroEl = document.getElementById('homepage-hero');
+    if (!heroEl) return;
+
+    artworkContainer = heroEl.querySelector('.artwork-container');
+    const threadGroup = heroEl.querySelector('#red-threads');
+    if (!threadGroup) return;
+
+    threadPaths = Array.from(threadGroup.querySelectorAll('path'));
+    createExtensions();
+    startAmbientMotion();
+    if (!isMobile) setupCursorInteraction();
+  }
+
+  function createExtensions() {
+    const extLayer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    extLayer.classList.add('thread-extensions');
+    extLayer.setAttribute('aria-hidden', 'true');
+    heroEl.appendChild(extLayer);
+
+    const artRect = artworkContainer.getBoundingClientRect();
+    const heroRect = heroEl.getBoundingClientRect();
+    const w = heroRect.width;
+    const h = heroRect.height;
+
+    const artX = artRect.left - heroRect.left;
+    const artY = artRect.top - heroRect.top;
+    const artW = artRect.width;
+    const artH = artRect.height;
+
+    EDGE_POINTS.forEach((ep) => {
+      // Convert artwork-relative to hero-absolute
+      const startX = artX + ep.x * artW;
+      const startY = artY + ep.y * artH;
+
+      // Normalize direction
+      const mag = Math.sqrt(ep.outDirX * ep.outDirX + ep.outDirY * ep.outDirY);
+      const dirX = ep.outDirX / mag;
+      const dirY = ep.outDirY / mag;
+
+      // Extend line in direction until hitting any screen edge
+      let endX, endY;
+      let tMin = Infinity;
+
+      // Check intersection with all 4 edges, pick closest
+      if (dirX > 0.001) { const t = (w - startX) / dirX; if (t > 0 && t < tMin) tMin = t; }
+      if (dirX < -0.001) { const t = -startX / dirX; if (t > 0 && t < tMin) tMin = t; }
+      if (dirY > 0.001) { const t = (h - startY) / dirY; if (t > 0 && t < tMin) tMin = t; }
+      if (dirY < -0.001) { const t = -startY / dirY; if (t > 0 && t < tMin) tMin = t; }
+
+      if (tMin === Infinity) return;
+      endX = startX + dirX * tMin;
+      endY = startY + dirY * tMin;
+
+      // Length of extension
+      const extLen = Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
+      if (extLen < 30) return;
+
+      // Nearly straight — like a taut string pulled to the wall.
+      // Only the tiniest sag to feel organic, not mechanical.
+      const perpX = -dirY;
+      const perpY = dirX;
+      const bowAmount = extLen * 0.015;
+      const bowSide = (ep.outDirX * ep.outDirY > 0) ? 1 : -1;
+
+      const cp1X = startX + dirX * extLen * 0.33 + perpX * bowAmount * bowSide;
+      const cp1Y = startY + dirY * extLen * 0.33 + perpY * bowAmount * bowSide;
+      const cp2X = startX + dirX * extLen * 0.66 + perpX * bowAmount * bowSide;
+      const cp2Y = startY + dirY * extLen * 0.66 + perpY * bowAmount * bowSide;
+
+      // Ink-style taper: thick at figure → thin at edge, smooth continuous stroke
+      const segments = 5;
+      const paths = [];
+
+      for (let s = 0; s < segments; s++) {
+        const seg = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+        // Thin at figure, gradually thicker toward the edge
+        const t = s / (segments - 1);
+        const sw = 0.7 + t * 0.3; // 0.7 → 1.0
+
+        seg.setAttribute('stroke-width', sw.toFixed(2));
+        seg.setAttribute('stroke', '#d51515');
+        seg.setAttribute('fill', 'none');
+        seg.setAttribute('stroke-linecap', 'round');
+        extLayer.appendChild(seg);
+        paths.push(seg);
+      }
+
+      // Short vertical scratch marks at the exact junction point
+      const scratches = [];
+      const scratchCount = 4 + Math.floor(Math.random() * 3);
+      const pX = -dirY;
+      const pY = dirX;
+
+      for (let sc = 0; sc < scratchCount; sc++) {
+        const scratch = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        // Tightly packed, overlapping at the junction
+        const offset = (sc - scratchCount / 2) * 0.8 + (Math.random() - 0.5) * 0.5;
+        const ptX = startX + dirX * offset;
+        const ptY = startY + dirY * offset;
+        // Short perpendicular (vertical relative to the string)
+        const scratchLen = 4 + Math.random() * 4;
+        scratch.setAttribute('x1', (ptX + pX * scratchLen / 2).toFixed(1));
+        scratch.setAttribute('y1', (ptY + pY * scratchLen / 2).toFixed(1));
+        scratch.setAttribute('x2', (ptX - pX * scratchLen / 2).toFixed(1));
+        scratch.setAttribute('y2', (ptY - pY * scratchLen / 2).toFixed(1));
+        scratch.setAttribute('stroke', 'var(--figure-color, #1a1a1a)');
+        scratch.setAttribute('stroke-width', (0.5 + Math.random() * 0.3).toFixed(2));
+        scratch.setAttribute('stroke-linecap', 'round');
+        scratch.style.opacity = 1;
+        extLayer.appendChild(scratch);
+        scratches.push(scratch);
+      }
+
+      extensions.push({
+        paths: paths,
+        scratches: scratches,
+        startX, startY, endX, endY,
+        cp1X, cp1Y, cp2X, cp2Y,
+        origCp1X: cp1X, origCp1Y: cp1Y,
+        origCp2X: cp2X, origCp2Y: cp2Y,
+      });
+
+      updateExt(extensions[extensions.length - 1]);
+    });
+  }
+
+  function startAmbientMotion() {
+    threadPaths.forEach((path) => {
+      const dur = 18 + Math.random() * 12;
+      const delay = Math.random() * 5;
+      gsap.to(path, {
+        x: (Math.random() - 0.5) * 0.5,
+        y: (Math.random() - 0.5) * 0.4,
+        duration: dur,
+        repeat: -1,
+        yoyo: true,
+        delay: delay,
+        ease: 'sine.inOut',
+      });
+    });
+
+    // Pre-compute wave parameters for each extension
+    // Left/right lines get more movement than top/bottom
+    extensions.forEach((ext, i) => {
+      const dx = ext.endX - ext.startX;
+      const dy = ext.endY - ext.startY;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      ext.perpX = -dy / len;
+      ext.perpY = dx / len;
+      ext.origEndX = ext.endX;
+      ext.origEndY = ext.endY;
+
+      // Detect if mostly horizontal (left/right exit) by checking direction
+      const isHorizontal = Math.abs(dx) > Math.abs(dy);
+      const ampScale = isHorizontal ? 2.5 : 1;
+
+      ext.wave = {
+        amp1: (8 + Math.random() * 6) * ampScale,
+        amp2: (10 + Math.random() * 8) * ampScale,
+        ampEnd: (12 + Math.random() * 6) * ampScale,
+        speed1: (0.4 + Math.random() * 0.3) * (isHorizontal ? 1.3 : 1),
+        speed2: (0.3 + Math.random() * 0.25) * (isHorizontal ? 1.3 : 1),
+        speedEnd: (0.2 + Math.random() * 0.15) * (isHorizontal ? 1.2 : 1),
+        phase1: Math.random() * Math.PI * 2,
+        phase2: Math.random() * Math.PI * 2,
+        phaseEnd: Math.random() * Math.PI * 2,
+      };
+    });
+
+    // Single ticker updates all extensions every frame
+    gsap.ticker.add(function () {
+      const t = Date.now() / 1000;
+      extensions.forEach((ext) => {
+        const w = ext.wave;
+        const sin1 = Math.sin(t * w.speed1 + w.phase1);
+        const sin2 = Math.sin(t * w.speed2 + w.phase2);
+        const sinEnd = Math.sin(t * w.speedEnd + w.phaseEnd);
+
+        ext.cp1X = ext.origCp1X + ext.perpX * sin1 * w.amp1;
+        ext.cp1Y = ext.origCp1Y + ext.perpY * sin1 * w.amp1;
+        ext.cp2X = ext.origCp2X + ext.perpX * sin2 * w.amp2;
+        ext.cp2Y = ext.origCp2Y + ext.perpY * sin2 * w.amp2;
+        ext.endX = ext.origEndX + ext.perpX * sinEnd * w.ampEnd;
+        ext.endY = ext.origEndY + ext.perpY * sinEnd * w.ampEnd;
+        updateExt(ext);
+      });
+    });
+  }
+
+  function updateExt(ext) {
+    const segments = ext.paths.length;
+    for (let s = 0; s < segments; s++) {
+      const t0 = s / segments;
+      const t1 = (s + 1) / segments;
+      const p0 = cubicPoint(ext, t0);
+      const p1 = cubicPoint(ext, t1);
+      // Use two intermediate points for smoother sub-curves
+      const pA = cubicPoint(ext, t0 + (t1 - t0) * 0.33);
+      const pB = cubicPoint(ext, t0 + (t1 - t0) * 0.66);
+      ext.paths[s].setAttribute('d',
+        `M${p0.x.toFixed(1)},${p0.y.toFixed(1)} C${pA.x.toFixed(1)},${pA.y.toFixed(1)} ${pB.x.toFixed(1)},${pB.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`
+      );
+    }
+  }
+
+  function cubicPoint(ext, t) {
+    const u = 1 - t;
+    return {
+      x: u*u*u*ext.startX + 3*u*u*t*ext.cp1X + 3*u*t*t*ext.cp2X + t*t*t*ext.endX,
+      y: u*u*u*ext.startY + 3*u*u*t*ext.cp1Y + 3*u*t*t*ext.cp2Y + t*t*t*ext.endY,
+    };
+  }
+
+  function setupCursorInteraction() {
+    let ticking = false;
+    heroEl.addEventListener('mousemove', (e) => {
+      const rect = heroEl.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          applyCursorEffect();
+          ticking = false;
+        });
+      }
+    });
+
+    heroEl.addEventListener('mouseleave', () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+      extensions.forEach((ext) => {
+        gsap.to(ext, {
+          cp1X: ext.origCp1X, cp1Y: ext.origCp1Y,
+          cp2X: ext.origCp2X, cp2Y: ext.origCp2Y,
+          duration: 2.5,
+          ease: 'elastic.out(1, 0.3)',
+          overwrite: 'auto',
+          onUpdate: () => updateExt(ext),
+        });
+      });
+    });
+  }
+
+  function applyCursorEffect() {
+    const radius = 70;
+    const force = 3;
+
+    extensions.forEach((ext) => {
+      // Check proximity to both control points
+      const dx1 = ext.cp1X - mouse.x;
+      const dy1 = ext.cp1Y - mouse.y;
+      const dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+
+      const dx2 = ext.cp2X - mouse.x;
+      const dy2 = ext.cp2Y - mouse.y;
+      const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+      if (dist1 < radius && dist1 > 0) {
+        const strength = (1 - dist1 / radius) * force;
+        const angle = Math.atan2(dy1, dx1);
+        gsap.to(ext, {
+          cp1X: ext.origCp1X + Math.cos(angle) * strength,
+          cp1Y: ext.origCp1Y + Math.sin(angle) * strength,
+          duration: 0.6,
+          ease: 'power2.out',
+          overwrite: 'auto',
+          onUpdate: () => updateExt(ext),
+        });
+      }
+
+      if (dist2 < radius && dist2 > 0) {
+        const strength = (1 - dist2 / radius) * force;
+        const angle = Math.atan2(dy2, dx2);
+        gsap.to(ext, {
+          cp2X: ext.origCp2X + Math.cos(angle) * strength,
+          cp2Y: ext.origCp2Y + Math.sin(angle) * strength,
+          duration: 0.6,
+          ease: 'power2.out',
+          overwrite: 'auto',
+          onUpdate: () => updateExt(ext),
+        });
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
