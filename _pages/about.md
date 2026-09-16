@@ -151,7 +151,10 @@ window.__cameraEntryStartedAt = performance.now();
 var homepageHero = document.getElementById('homepage-hero');
 if (window.__cameraSkipEntry) {
   if (homepageHero) {
-    homepageHero.classList.add('homepage-hero--entered');
+    homepageHero.classList.add('homepage-hero--entered', 'homepage-hero--returning');
+    window.setTimeout(function() {
+      homepageHero.classList.remove('homepage-hero--returning');
+    }, 1080);
   }
   document.documentElement.classList.remove('camera-returning-home');
 } else {

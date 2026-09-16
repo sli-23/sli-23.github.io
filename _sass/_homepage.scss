@@ -31,6 +31,7 @@ html[data-theme="dark"] body:has(.homepage-hero) {
   --mission-cream: #f2eee5;
   --mission-ink: #f2eee5;
   --mission-muted: rgba(242, 238, 229, 0.62);
+  --mission-grid-opacity: 0.12;
 
   position: relative;
   isolation: isolate;
@@ -73,7 +74,7 @@ html[data-theme="dark"] .homepage-hero {
 .mission-backdrop__grid {
   position: absolute;
   inset: 0;
-  opacity: 0.12;
+  opacity: var(--mission-grid-opacity);
   background-image:
     linear-gradient(rgba(242, 238, 229, 0.12) 1px, transparent 1px),
     linear-gradient(90deg, rgba(242, 238, 229, 0.12) 1px, transparent 1px);
@@ -254,6 +255,101 @@ html[data-theme="dark"] .homepage-hero {
   }
 }
 
+// When leaving a viewfinder page, bring the environment back while the camera
+// is still pulling out. A restrained signal sweep and drifting grid bridge the
+// WebGL motion into the static homepage composition.
+.homepage-hero--returning {
+  .mission-backdrop {
+    animation: mission-backdrop-return 0.88s cubic-bezier(0.2, 0.72, 0.2, 1) both;
+  }
+
+  .mission-backdrop::after {
+    content: "";
+    position: absolute;
+    inset: -24%;
+    pointer-events: none;
+    background: linear-gradient(
+      112deg,
+      transparent 37%,
+      rgba(224, 184, 92, 0.02) 43%,
+      rgba(224, 184, 92, 0.16) 50%,
+      rgba(242, 238, 229, 0.06) 55%,
+      transparent 64%
+    );
+    transform: translate3d(-46%, 0, 0) rotate(-4deg);
+    animation: mission-signal-sweep 0.94s cubic-bezier(0.2, 0.72, 0.2, 1) both;
+    will-change: opacity, transform;
+  }
+
+  .mission-backdrop__grid {
+    animation: mission-grid-return 0.88s cubic-bezier(0.2, 0.72, 0.2, 1) both;
+    will-change: opacity, transform;
+  }
+}
+
+@keyframes mission-backdrop-return {
+  0% {
+    opacity: 0;
+  }
+
+  42% {
+    opacity: 0.46;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes mission-signal-sweep {
+  0% {
+    opacity: 0;
+    transform: translate3d(-46%, 0, 0) rotate(-4deg);
+  }
+
+  28% {
+    opacity: 0.72;
+  }
+
+  68% {
+    opacity: 0.24;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(46%, 0, 0) rotate(-4deg);
+  }
+}
+
+@keyframes mission-grid-return {
+  0% {
+    opacity: 0;
+    transform: translate3d(-1.15rem, 0.7rem, 0) scale(1.015);
+  }
+
+  58% {
+    opacity: 0.16;
+  }
+
+  100% {
+    opacity: var(--mission-grid-opacity);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage-hero--returning {
+    .mission-backdrop {
+      animation-duration: 0.12s;
+    }
+
+    .mission-backdrop::after,
+    .mission-backdrop__grid {
+      animation: none;
+    }
+  }
+}
+
 // Artwork composition — both layers share the same viewBox
 .artwork-container {
   position: relative;
@@ -341,6 +437,8 @@ html[data-theme="dark"] .homepage-hero {
   }
 
   .homepage-hero {
+    --mission-grid-opacity: 0.09;
+
     width: 100%;
     height: 100vh;
     height: 100svh;
@@ -361,7 +459,7 @@ html[data-theme="dark"] .homepage-hero {
   }
 
   .mission-backdrop__grid {
-    opacity: 0.09;
+    opacity: var(--mission-grid-opacity);
     background-size: 3rem 3rem;
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 88%);
   }

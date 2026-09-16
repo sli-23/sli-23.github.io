@@ -156,6 +156,7 @@ const dpadTilt = { x: 0, y: 0, targetX: 0, targetY: 0 };
 let hoverName = null;
 
 let reducedMotion = false;
+let homeReturnMotionTimer = 0;
 
 /* ------------------------------------------------------------------ *
  * 4. COMMANDS
@@ -1906,6 +1907,18 @@ function finishZoomOut() {
   }
 }
 
+function startHomeReturnMotion() {
+  const hero = document.getElementById("homepage-hero");
+  if (!hero) return;
+
+  window.clearTimeout(homeReturnMotionTimer);
+  hero.classList.add("homepage-hero--returning");
+  homeReturnMotionTimer = window.setTimeout(
+    () => hero.classList.remove("homepage-hero--returning"),
+    reducedMotion ? 160 : 1080,
+  );
+}
+
 function beginViewfinderExit(url, { pushHistory = true } = {}) {
   if (ui.navigating || zoom.state !== "idle") return;
   if (!ui.inlineShell) {
@@ -1914,6 +1927,11 @@ function beginViewfinderExit(url, { pushHistory = true } = {}) {
     } catch {
       // Returning home still works when session storage is unavailable.
     }
+  } else {
+    // Reveal the homepage atmosphere while the camera is still pulling back.
+    // This bridges the old gap where the complete camera appeared first and
+    // the backdrop popped in only after the zoom animation had finished.
+    startHomeReturnMotion();
   }
   finishViewfinderReveal({ blankScreen: false });
   pointer.x = 0;
