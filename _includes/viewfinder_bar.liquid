@@ -1,0 +1,22 @@
+{% comment %}
+  On-screen control bar for viewfinder pages. The site header is hidden on these
+  pages, so navigation lives inside the frame — a terminal has its own UI.
+{% endcomment %}
+<div class="vf-bar">
+  <span class="vf-bar__title">{{ page.title }}</span>
+  <span class="vf-bar__links">
+    {% assign vf_links = "cv,RESUME|blog,BLOG|info,INFO" | split: "|" %}
+    {% for pair in vf_links %}
+      {% assign bits = pair | split: "," %}
+      {% assign slug = bits[0] %}
+      {% assign label = bits[1] %}
+      {% assign href = slug | prepend: '/' | append: '/' | relative_url %}
+      <a
+        class="vf-bar__link{% if page.url contains slug %} vf-bar__link--active{% endif %}"
+        href="{{ href }}"
+        >{{ label }}</a
+      >
+    {% endfor %}
+    <a class="vf-bar__menu" href="{{ '/' | relative_url }}">Menu</a>
+  </span>
+</div>

@@ -73,8 +73,25 @@
 {% elsif site.icon != blank %}
   <link rel="shortcut icon" href="{{ site.icon | prepend: '/assets/img/' | relative_url | bust_file_cache}}">
 {% endif %}
-<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url | bust_css_cache }}">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+
+{% if page.permalink == '/' or page.viewfinder %}
+  <!-- Discover the local camera runtime while the document is still parsing.
+       Keeping Three.js on-site prevents the 3D model disappearing when a
+       third-party CDN is unavailable. -->
+  <link
+    rel="modulepreload"
+    href="{{ '/assets/vendor/three.module.min.js' | relative_url | bust_file_cache }}"
+  >
+  <link rel="prefetch" href="{{ '/cv/' | relative_url }}" as="document">
+  <link rel="prefetch" href="{{ '/blog/' | relative_url }}" as="document">
+  <link rel="prefetch" href="{{ '/info/' | relative_url }}" as="document">
+  <link
+    rel="modulepreload"
+    href="{{ '/assets/js/camera-hero.js' | relative_url | bust_file_cache }}"
+  >
+{% endif %}
 
 <!-- Dark Mode -->
 <script src="{{ '/assets/js/theme.js' | relative_url | bust_file_cache }}"></script>

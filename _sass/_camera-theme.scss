@@ -1,0 +1,1198 @@
+// Site-wide palette taken from the camera artwork, so inner pages (resume,
+// blog, info) read as the same object as the homepage. These override
+// al-folio's theme variables rather than restyling components one by one.
+
+:root,
+html[data-theme="light"] {
+  --camera-blue: #0b0d0c;
+  --camera-cream: #f0ece4;
+  --camera-lcd: #f4f0e6;
+  --camera-ink: #171918;
+  --camera-ink-soft: #62645f;
+  --camera-gold: #e0b85c;
+  --camera-gold-soft: #e0b85c;
+  --camera-edge: #c8c2b8;
+
+  --global-bg-color: var(--camera-blue);
+  --global-text-color: var(--camera-ink);
+  --global-text-color-light: var(--camera-ink-soft);
+  --global-theme-color: var(--camera-gold);
+  --global-hover-color: #e0b85c;
+  --global-hover-text-color: var(--camera-lcd);
+  --global-divider-color: rgba(23, 25, 24, 0.16);
+  --global-card-bg-color: var(--camera-lcd);
+  --global-code-bg-color: rgba(23, 25, 24, 0.06);
+  --global-highlight-color: var(--camera-gold);
+  --global-nav-accent: var(--camera-gold);
+  --global-footer-bg-color: transparent;
+  --global-footer-text-color: var(--camera-ink-soft);
+  --global-footer-link-color: var(--camera-gold);
+  --global-back-to-top-bg-color: var(--camera-ink);
+  --global-back-to-top-text-color: var(--camera-lcd);
+  --global-newsletter-bg-color: var(--camera-lcd);
+  --global-newsletter-text-color: var(--camera-ink);
+  --global-blockquote-text-color: var(--camera-ink-soft);
+  --global-theme-color-light: rgba(224, 184, 92, 0.14);
+  --global-distill-app-color: var(--camera-ink-soft);
+  // leftover from the old artwork palette; it colours blog dates and headings
+  --global-accent-red: var(--camera-gold);
+  --global-accent-warm: var(--camera-gold);
+  --global-accent-cold: var(--camera-ink-soft);
+}
+
+html[data-theme="dark"] {
+  --camera-blue: #050606;
+  --camera-cream: #171a19;
+  --camera-lcd: #121514;
+  --camera-ink: #f2eee5;
+  --camera-ink-soft: #aaa79f;
+  --camera-gold: #e0b85c;
+  --camera-edge: #353835;
+
+  --global-bg-color: var(--camera-blue);
+  --global-text-color: var(--camera-ink);
+  --global-text-color-light: var(--camera-ink-soft);
+  --global-theme-color: var(--camera-gold);
+  --global-hover-color: #e0b85c;
+  --global-hover-text-color: #101211;
+  --global-divider-color: rgba(242, 238, 229, 0.16);
+  --global-card-bg-color: var(--camera-cream);
+  --global-code-bg-color: rgba(242, 238, 229, 0.07);
+  --global-footer-text-color: var(--camera-ink-soft);
+  --global-footer-link-color: var(--camera-gold);
+  --global-back-to-top-bg-color: var(--camera-gold);
+  --global-back-to-top-text-color: #101211;
+  --global-newsletter-bg-color: var(--camera-cream);
+  --global-newsletter-text-color: var(--camera-ink);
+  --global-theme-color-light: rgba(224, 184, 92, 0.16);
+  --global-accent-red: var(--camera-gold);
+  --global-accent-warm: var(--camera-gold);
+  --global-accent-cold: var(--camera-ink-soft);
+}
+
+// --- Typography: monospace headings to match the LCD lettering -------------
+
+$camera-mono: "Courier New", Courier, monospace;
+
+body {
+  background-color: var(--global-bg-color);
+}
+
+// Inner pages sit on a cream sheet floating on the blue field, which reads as
+// the camera's LCD rather than a bare page.
+body:not(:has(.homepage-hero)) {
+  .container.mt-5 {
+    background: var(--camera-lcd);
+    border-radius: 10px;
+    padding: 2.5rem 2.25rem 3rem;
+    margin-top: 2.5rem !important;
+    margin-bottom: 3rem;
+    box-shadow: 0 1px 0 rgba(48, 52, 58, 0.1);
+  }
+}
+
+.post-title,
+.post-description,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $camera-mono;
+  letter-spacing: 0.06em;
+  color: var(--global-text-color);
+}
+
+.post-title {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.post-description {
+  color: var(--global-text-color-light);
+  letter-spacing: 0.04em;
+}
+
+// Header: a cream bar reading as an extension of the camera's LCD, sitting on
+// the blue field. Hairline rule instead of a heavy border, generous spacing.
+#navbar,
+nav.navbar {
+  background-color: var(--camera-lcd) !important;
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--camera-edge) !important;
+  box-shadow: none !important;
+  padding-top: 1.15rem;
+  padding-bottom: 1.15rem;
+
+  .navbar-brand,
+  .nav-link,
+  .navbar-nav .nav-item .nav-link,
+  #light-toggle-system,
+  #light-toggle-dark,
+  #light-toggle-light,
+  .navbar-toggler {
+    color: var(--camera-ink) !important;
+    font-family: $camera-mono;
+    font-size: 0.74rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: opacity 0.22s ease;
+  }
+
+  // brand doubles as the shutter-style mark: bold, wide, fully opaque
+  .navbar-brand {
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    opacity: 1;
+  }
+
+  .navbar-nav {
+    gap: 1.9rem;
+    align-items: center;
+  }
+
+  // no horizontal padding, so the gold rule below matches the word exactly
+  .nav-link {
+    position: relative;
+    padding: 0.25rem 0 0.35rem !important;
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+  }
+
+  // gold rule grows from the centre on hover, stays for the current page
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--camera-gold);
+    transform: scaleX(0);
+    transition: transform 0.26s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-item.active .nav-link::after {
+    transform: scaleX(1);
+  }
+
+  .nav-item.active .nav-link {
+    opacity: 1;
+    font-weight: 700;
+  }
+}
+
+// Scroll progress bar in gold across the very top
+// Light/dark toggle. Only the wrapper is styled: al-folio renders all three
+// icons (light / dark / system) and its JS shows one, so forcing `display` on
+// the icons made all three appear at once as overlapping circles.
+#light-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  border: 1px solid var(--camera-edge);
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: var(--camera-gold);
+    border-color: var(--camera-gold);
+  }
+
+  &:hover i,
+  &:hover svg {
+    color: var(--camera-lcd) !important;
+  }
+
+  i,
+  svg {
+    color: var(--camera-ink) !important;
+    font-size: 0.85rem !important;
+    opacity: 1;
+  }
+}
+
+// Thin enough that a full-width bar on a short page doesn't look like a border
+#progress {
+  background: var(--camera-gold) !important;
+  height: 2px !important;
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+// Back-to-top on regular article pages: a compact version of the camera's
+// MENU pill. Camera/home screens do not need it and hide it entirely below.
+#back-to-top {
+  right: 1.25rem !important;
+  bottom: 1.25rem !important;
+  width: 4.6rem !important;
+  height: 2.4rem !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--camera-gold) !important;
+  background: var(--camera-ink) !important;
+  color: var(--camera-lcd) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.34rem;
+  line-height: 1;
+  box-shadow: none !important;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+
+  svg {
+    width: 0.92rem !important;
+    height: 0.92rem !important;
+    margin: 0 !important;
+  }
+
+  &::after {
+    content: "TOP";
+    font-family: $camera-mono;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  &:hover {
+    background: var(--camera-gold) !important;
+    color: var(--camera-ink) !important;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.94);
+  }
+}
+
+html.camera-shell-active #back-to-top {
+  display: none !important;
+}
+
+// Article detail is a focused reading mode. The global site header causes a
+// complete camera/document reload, so contextual controls replace it here.
+body.camera-article-page {
+  padding-top: 0 !important;
+
+  #navbar,
+  nav.navbar {
+    display: none !important;
+  }
+
+  .container.mt-5 {
+    margin-top: 1.25rem !important;
+  }
+
+  .breadcrumb-nav {
+    display: none;
+  }
+}
+
+.article-return {
+  position: sticky;
+  top: 0.8rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 2.4rem;
+  padding: 0.48rem;
+  border: 2px solid var(--camera-edge);
+  border-radius: 999px;
+  background: rgba(253, 249, 228, 0.94);
+  background: color-mix(in srgb, var(--camera-lcd) 90%, transparent);
+  box-shadow: none;
+  backdrop-filter: blur(12px);
+  font-family: $camera-mono;
+}
+
+.article-return__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: min(14rem, calc(50% - 0.5rem));
+  min-height: 2.5rem;
+  padding: 0.55rem 1rem;
+  box-sizing: border-box;
+  border-radius: 999px;
+  color: var(--camera-ink) !important;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    color: var(--camera-ink) !important;
+    background: rgba(224, 184, 92, 0.18);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+  }
+}
+
+.article-return__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.45rem;
+  width: 1.45rem;
+  height: 1.45rem;
+  color: var(--camera-gold);
+  line-height: 1;
+
+  svg {
+    display: block;
+    width: 1.35rem;
+    height: 1.35rem;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform: translateY(-0.18rem);
+  }
+}
+
+.article-return__home {
+  background: var(--camera-edge);
+  color: var(--camera-ink) !important;
+
+  &:hover {
+    background: var(--camera-gold);
+  }
+}
+
+html.camera-reader-active,
+html.camera-reader-active body {
+  overflow: hidden;
+}
+
+.camera-reader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--camera-blue);
+  animation: cameraReaderIn 0.24s ease-out both;
+}
+
+.camera-reader__viewport {
+  width: min(68rem, calc(100% - 3rem));
+  min-height: calc(100vh - 3rem);
+  margin: 1.5rem auto;
+  padding: 1rem 3rem 4rem;
+  border: 2px solid var(--camera-edge);
+  border-radius: 18px;
+  background: var(--camera-lcd);
+}
+
+.camera-reader__nav {
+  top: 1rem;
+}
+
+.camera-reader__article {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+@keyframes cameraReaderIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .article-return {
+    border-radius: 16px;
+  }
+
+  .article-return__link {
+    width: calc(50% - 0.25rem);
+    padding-inline: 0.75rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .article-return__arrow {
+    flex-basis: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+
+    svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      transform: translateY(-0.12rem);
+    }
+  }
+
+  .camera-reader__viewport {
+    width: calc(100% - 1rem);
+    min-height: calc(100vh - 1rem);
+    margin: 0.5rem auto;
+    padding: 0.5rem 1.2rem 2.5rem;
+    border-radius: 12px;
+  }
+}
+
+// Links, accents, dividers
+a {
+  color: var(--global-theme-color);
+
+  &:hover {
+    color: var(--global-hover-color);
+  }
+}
+
+hr {
+  border-top: 1px solid var(--global-divider-color);
+}
+
+blockquote {
+  border-left: 3px solid var(--camera-gold);
+  color: var(--global-text-color-light);
+}
+
+// CV / resume layout accents
+.card {
+  background-color: var(--global-card-bg-color);
+  border: 1px solid var(--global-divider-color);
+}
+
+table {
+  color: var(--global-text-color);
+}
+
+@media (max-width: 768px) {
+  body:not(:has(.homepage-hero)) .container.mt-5 {
+    padding: 1.5rem 1.25rem 2rem;
+    margin-top: 1.25rem !important;
+    border-radius: 8px;
+  }
+}
+
+// Arrival: inner page content continues the upward motion of the transition
+@keyframes cameraPageRise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body:not(:has(.homepage-hero)) .container.mt-5 {
+  animation: cameraPageRise 0.5s cubic-bezier(0.22, 0.68, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(:has(.homepage-hero)) .container.mt-5 {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   CV / resume page
+   The stock layout nests cream cards inside a cream sheet, so no boundary is
+   readable, and mixes mono headings with sans body and mono-italic notes.
+   Here: one sheet, sections separated by rules instead of boxes, mono reserved
+   for headings and meta, and a readable serif for prose.
+   ========================================================================== */
+
+$camera-serif: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+
+body:not(:has(.homepage-hero)) .container.mt-5 {
+  max-width: 62rem;
+  padding: 3.5rem 3rem 4rem;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(48, 52, 58, 0.1);
+}
+
+.post-title {
+  font-size: 2rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 0.35rem;
+}
+
+.post-description {
+  font-family: $camera-mono;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--global-divider-color);
+}
+
+// --- sections become flat bands, not nested cards -------------------------
+.cv .card,
+.card.mt-3 {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 0 2.75rem !important;
+  border-radius: 0 !important;
+}
+
+.card-header,
+.cv .card-header {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 0 0.9rem !important;
+  margin-bottom: 1.4rem;
+  border-bottom: 2px solid var(--camera-gold) !important;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $camera-mono;
+    font-size: 0.85rem !important;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--global-text-color);
+  }
+}
+
+.card-body,
+.cv .card-body {
+  padding: 0 !important;
+}
+
+// --- Basics: animated top-down dining scene -------------------------------
+// The supplied artwork already carries the grain and print texture. The CSS
+// only composes the pieces and gives each hand its own restrained idle motion.
+.resume-table-scene {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: clamp(340px, 36vw, 470px);
+  overflow: hidden;
+  border: 1px solid rgba(242, 238, 229, 0.2);
+  border-radius: 2px;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(224, 184, 92, 0.08), transparent 45%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(242, 238, 229, 0.018) 0 1px,
+      transparent 1px 4px
+    ),
+    linear-gradient(135deg, #1a1a17 0%, #0d0f0e 72%, #090a09 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.5),
+    inset 0 0 3rem rgba(0, 0, 0, 0.28);
+  animation: resumeTableArrive 0.55s cubic-bezier(0.22, 0.68, 0.2, 1) both;
+
+  // Quiet registration marks keep the scene related to the camera UI without
+  // placing more words over the illustration.
+  &::after {
+    position: absolute;
+    inset: 0.8rem;
+    z-index: 7;
+    pointer-events: none;
+    content: "";
+    opacity: 0.32;
+    background:
+      linear-gradient(var(--camera-gold), var(--camera-gold)) left top / 1.2rem 1px no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) left top / 1px 1.2rem no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) right top / 1.2rem 1px no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) right top / 1px 1.2rem no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) left bottom / 1.2rem 1px no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) left bottom / 1px 1.2rem no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) right bottom / 1.2rem 1px no-repeat,
+      linear-gradient(var(--camera-gold), var(--camera-gold)) right bottom / 1px 1.2rem no-repeat;
+  }
+
+  img {
+    position: absolute;
+    display: block;
+    max-width: none;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.resume-table-scene__tableau {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 49.1%;
+  width: min(92%, 720px);
+  transform: translateX(-50%);
+  container-type: size;
+  --resume-hand-width: min(24cqw, 34cqh);
+  --resume-hand-bottom: max(-30cqh, -20cqw);
+  --resume-hand-edge: clamp(-1rem, calc((100cqw - 42rem) * 0.08), 0rem);
+}
+
+.resume-table-scene .resume-table-scene__placemat {
+  z-index: 1;
+  top: 52%;
+  left: 50%;
+  width: 70%;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+.resume-table-scene .resume-table-scene__plate {
+  z-index: 2;
+  top: 52%;
+  left: 54.25%;
+  width: 43%;
+  height: auto;
+  transform: translate(-50%, -50%) rotate(-1.25deg);
+  filter: drop-shadow(0 0.5rem 0.65rem rgba(0, 0, 0, 0.2));
+}
+
+.resume-table-scene .resume-table-scene__utensil {
+  z-index: 3;
+  top: 52%;
+  height: auto;
+  filter: drop-shadow(0 0.35rem 0.35rem rgba(0, 0, 0, 0.16));
+}
+
+.resume-table-scene .resume-table-scene__utensil--fork {
+  left: 23%;
+  width: 3.8%;
+  transform: translate(-50%, -50%) rotate(-1.5deg);
+}
+
+.resume-table-scene .resume-table-scene__utensil--knife {
+  left: 76%;
+  width: 3.4%;
+  transform: translate(-50%, -50%) rotate(1.5deg);
+}
+
+.resume-table-scene__motion {
+  position: absolute;
+  bottom: var(--resume-hand-bottom);
+  z-index: 4;
+  width: var(--resume-hand-width);
+  pointer-events: none;
+  transform-origin: 50% 92%;
+  will-change: transform;
+}
+
+.resume-table-scene__motion--left {
+  left: var(--resume-hand-edge);
+  aspect-ratio: 416 / 1027;
+  animation: resumeHandEnterLeft 1.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.resume-table-scene__motion--right {
+  right: var(--resume-hand-edge);
+  aspect-ratio: 405 / 1056;
+  animation: resumeHandEnterRight 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+
+.resume-table-scene .resume-table-scene__hand {
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0.35rem 0.35rem rgba(0, 0, 0, 0.16));
+  transform-origin: 50% 92%;
+}
+
+.resume-table-scene__motion--left .resume-table-scene__hand {
+  animation: resumeHandTrembleLeft 1.85s ease-in-out infinite;
+}
+
+.resume-table-scene__motion--right .resume-table-scene__hand {
+  animation: resumeHandTrembleRight 2.1s ease-in-out -0.35s infinite;
+}
+
+@keyframes resumeTableArrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.992);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes resumeHandEnterLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 48%, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes resumeHandEnterRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 48%, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes resumeHandTrembleLeft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  22% {
+    transform: translate3d(-1px, 1px, 0) rotate(-0.16deg);
+  }
+
+  48% {
+    transform: translate3d(1px, -1px, 0) rotate(0.13deg);
+  }
+
+  73% {
+    transform: translate3d(0, 1px, 0) rotate(-0.08deg);
+  }
+}
+
+@keyframes resumeHandTrembleRight {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  19% {
+    transform: translate3d(1px, 0, 0) rotate(0.12deg);
+  }
+
+  46% {
+    transform: translate3d(-1px, -1px, 0) rotate(-0.14deg);
+  }
+
+  78% {
+    transform: translate3d(1px, 1px, 0) rotate(0.07deg);
+  }
+}
+
+// --- rows: meta column left, content right --------------------------------
+.list-group-item {
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid var(--global-divider-color) !important;
+  padding: 1.5rem 0 !important;
+
+  &:first-child {
+    border-top: none !important;
+  }
+}
+
+// date: a quiet mono label, not a gold pill
+.badge.danger-color-dark,
+.list-group-item .badge {
+  background: transparent !important;
+  color: var(--global-text-color-light) !important;
+  font-family: $camera-mono;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  text-transform: none !important;
+  white-space: nowrap;
+}
+
+.location,
+.institution {
+  font-family: $camera-mono;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  color: var(--global-text-color-light);
+  margin-bottom: 0.2rem;
+}
+
+// entry titles
+.list-group-item .title,
+h6.title {
+  font-family: $camera-mono !important;
+  font-size: 0.98rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  color: var(--global-text-color) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+// prose reads as prose, in a serif — no more mono italic paragraphs
+.list-group-item p,
+.card-text p,
+.list-group-item .description,
+.list-group-item li {
+  font-family: $camera-serif;
+  font-style: normal !important;
+  font-size: 0.98rem;
+  line-height: 1.62;
+  color: var(--global-text-color);
+  opacity: 0.9;
+}
+
+// key/value tables (Basics)
+.table-cv {
+  td {
+    padding: 0.42rem 0 !important;
+    vertical-align: top;
+  }
+
+  td:first-child b,
+  td.font-weight-bold {
+    font-family: $camera-mono;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--global-text-color-light);
+    white-space: nowrap;
+    padding-right: 2rem !important;
+  }
+
+  td.text {
+    font-family: $camera-serif;
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+}
+
+// small link buttons
+.btncv {
+  font-family: $camera-mono;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--camera-gold);
+  border-radius: 3px;
+  color: var(--camera-gold) !important;
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: var(--camera-gold);
+    color: var(--camera-lcd) !important;
+  }
+}
+
+.iconlocation,
+.iconinstitution {
+  opacity: 0.45;
+  margin-right: 0.3rem;
+}
+
+@media (max-width: 768px) {
+  body:not(:has(.homepage-hero)) .container.mt-5 {
+    padding: 2rem 1.4rem 2.5rem;
+  }
+
+  .post-title {
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+  }
+
+  .resume-table-scene {
+    height: clamp(320px, 75vw, 420px);
+  }
+
+  .resume-table-scene__tableau {
+    width: min(100%, 620px);
+  }
+
+  .resume-table-scene .resume-table-scene__placemat {
+    width: 76%;
+  }
+
+  .resume-table-scene .resume-table-scene__plate {
+    left: 54.75%;
+    width: 48%;
+  }
+
+  .resume-table-scene .resume-table-scene__utensil--fork {
+    left: 20.5%;
+    width: 4.5%;
+  }
+
+  .resume-table-scene .resume-table-scene__utensil--knife {
+    left: 79%;
+    width: 4%;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-table-scene,
+  .resume-table-scene__motion,
+  .resume-table-scene__hand {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Blog index
+   Stock version puts a blue slab behind the title, red dates, gold hash links
+   and mono-italic uppercase descriptions — four accents fighting each other.
+   Here: one gold accent, mono for meta only, serif for descriptions.
+   ========================================================================== */
+
+.header-bar {
+  padding: 0 0 1.75rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--global-divider-color);
+  text-align: left;
+
+  .blog-title {
+    display: inline-block;
+    background: none !important; // drop the blue highlight slab
+    padding: 0 !important;
+    margin: 0;
+    font-family: $camera-mono;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--global-text-color);
+  }
+
+  .blog-description {
+    font-family: $camera-mono;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin: 0.6rem 0 0;
+  }
+}
+
+// tag / category row: quiet mono chips, one accent only
+.tag-category-list {
+  margin-bottom: 2.5rem;
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+  }
+
+  // the bullet separators are redundant once these are chips
+  p {
+    display: none !important;
+  }
+
+  i {
+    display: none !important;
+  }
+
+  li a {
+    display: inline-block;
+    font-family: $camera-mono;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--global-text-color) !important;
+    opacity: 0.7;
+    padding: 0.28rem 0.66rem;
+    border: 1px solid var(--camera-edge);
+    border-radius: 999px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      border-color: var(--camera-gold);
+      background: var(--camera-gold);
+      color: var(--camera-lcd) !important;
+    }
+  }
+}
+
+// --- post list ------------------------------------------------------------
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.post-item {
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--global-divider-color);
+  transition: background 0.2s ease;
+}
+
+.post-item__number {
+  font-family: $camera-mono;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--global-text-color-light);
+  opacity: 0.5;
+}
+
+.post-item h3 {
+  margin: 0.15rem 0 0.5rem;
+}
+
+// titles: tight enough to read, especially for CJK
+a.post-title {
+  font-family: $camera-mono;
+  font-size: 1.28rem !important;
+  font-weight: 700;
+  letter-spacing: 0.06em !important;
+  color: var(--global-text-color) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--camera-gold) !important;
+  }
+}
+
+// descriptions read as prose, not as uppercase mono italic
+.post-item .post-description,
+.post-item p.post-description {
+  font-family: $camera-serif !important;
+  font-style: normal !important;
+  font-size: 0.96rem;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1.6;
+  opacity: 0.78;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+// meta column: date, read time and tags all in one quiet mono voice
+.post-item__right,
+.post-meta,
+.post-tags {
+  font-family: $camera-mono;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.08em;
+  color: var(--global-text-color-light) !important;
+  text-transform: uppercase;
+}
+
+// the stock date is red; bring it back into the palette
+.post-item__right .post-date,
+.post-date,
+.post-item time {
+  color: var(--global-text-color-light) !important;
+  font-weight: 600;
+}
+
+.post-tags a,
+.post-item__right a {
+  color: var(--global-text-color-light) !important;
+  opacity: 0.75;
+
+  &:hover {
+    color: var(--camera-gold) !important;
+    opacity: 1;
+  }
+}
+
+// pagination
+.pagination {
+  margin-top: 2.5rem;
+
+  .page-item .page-link {
+    font-family: $camera-mono;
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    color: var(--global-text-color) !important;
+    background: transparent;
+    border: 1px solid var(--camera-edge);
+  }
+
+  .page-item.active .page-link {
+    background: var(--camera-gold) !important;
+    border-color: var(--camera-gold) !important;
+    color: var(--camera-lcd) !important;
+  }
+}
+
+// Blog meta column: date, read time and tags share one quiet mono voice
+.post-item__right {
+  text-align: right;
+}
+
+.post-item__date {
+  display: block;
+  font-family: $camera-mono;
+  font-size: 0.72rem !important;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--global-text-color-light) !important;
+}
+
+.post-item__reading {
+  display: block;
+  font-family: $camera-mono;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--global-text-color-light) !important;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+
+  i {
+    opacity: 0.5;
+  }
+}
+
+.post-item__tags {
+  margin-top: 0.35rem;
+
+  a {
+    font-family: $camera-mono;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--global-text-color-light) !important;
+    opacity: 0.65;
+    margin-left: 0.4rem;
+
+    &:hover {
+      color: var(--camera-gold) !important;
+      opacity: 1;
+    }
+  }
+}

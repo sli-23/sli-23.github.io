@@ -1,0 +1,272 @@
+// Inner pages rendered inside the camera's actual 3D screen.
+//
+// There is deliberately no CSS frame here. The charcoal bezel, the cream shell
+// and the controls are all real three.js geometry rendered behind this overlay;
+// camera-hero.js measures the LCD's projected rectangle every frame and writes
+// left/top/width/height onto .viewfinder__screen. That means the panel tracks
+// the real screen at any zoom, aspect ratio or window size, with no ratios to
+// keep in sync between the JS and the stylesheet.
+
+$vf-screen-color: #101312;
+$vf-screen-ink: #f2eee5;
+$vf-screen-muted: #aaa79f;
+$vf-screen-orange: #e0b85c;
+
+// Painted before any JS runs, and identical to the scene's clear colour, so the
+// hand-off between documents has nothing white to flash through.
+html:has(.viewfinder),
+body:has(.viewfinder) {
+  background: #0b0d0c;
+}
+
+html[data-theme="dark"]:has(.viewfinder),
+html[data-theme="dark"] body:has(.viewfinder) {
+  background: #050606;
+}
+
+body:has(.viewfinder) {
+  overflow: hidden; // the camera is fixed; scrolling happens inside the screen
+
+  #navbar,
+  nav.navbar,
+  footer,
+  #back-to-top,
+  #progress {
+    display: none !important;
+  }
+
+  .container.mt-5 {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+}
+
+.viewfinder {
+  position: fixed;
+  inset: 0;
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    outline: none;
+  }
+}
+
+// Positioned entirely from JS — the values below are only sane fallbacks for
+// the moment before the first frame, and while WebGL is unavailable.
+// Visible by default. camera-hero.js overrides left/top/width/height inline once
+// it can measure the LCD, but the content must never depend on that: three.js
+// loads over the network and WebGL can be unavailable, and hiding the panel
+// until then made the whole page render blank.
+.viewfinder__screen {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  // Match the exact projected LCD rectangle at ZOOM_SCREEN_FILL = 0.97.
+  // Keeping the CSS fallback on the same endpoint prevents the panel from
+  // jumping when three.js replaces these values with measured pixels.
+  width: min(86.18vw, 113.31vh);
+  aspect-ratio: 2.71 / 1.98;
+  height: auto;
+  overflow: hidden;
+  background: $vf-screen-color;
+  will-change: transform, opacity;
+
+  // fallback frame, so it still reads as a screen with no WebGL
+  border: 12px solid #202321;
+  border-radius: 14px;
+  box-sizing: content-box;
+
+  // once the real 3D bezel is behind it, the CSS frame is redundant
+  .camera-hero--ready & {
+    border: none;
+    box-sizing: content-box;
+  }
+
+  // Aged CCD screen: corners fall off slightly, a faint scanline texture, and a
+  // soft diagonal sheen. Kept deliberately low-contrast — enough to read as
+  // glass, not enough to fight the text.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background:
+      // corner vignette
+      radial-gradient(
+        130% 130% at 50% 50%,
+        rgba(0, 0, 0, 0) 58%,
+        rgba(0, 0, 0, 0.18) 84%,
+        rgba(0, 0, 0, 0.34) 100%
+      ),
+      // sheen across the glass
+      linear-gradient(
+        104deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0) 34%,
+        rgba(255, 255, 255, 0) 66%,
+        rgba(224, 184, 92, 0.045) 100%
+      ),
+      // scanlines
+      repeating-linear-gradient(
+        to bottom,
+        rgba(242, 238, 229, 0.022) 0 1px,
+        rgba(242, 238, 229, 0) 1px 3px
+      );
+  }
+
+  // a hint of barrel curvature at the very edges
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    z-index: 3;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 16px rgba(0, 0, 0, 0.44),
+      inset 0 1px 0 rgba(242, 238, 229, 0.12);
+  }
+}
+
+.viewfinder__scroll {
+  // The screen belongs to the device, so it keeps the design's colours in both
+  // themes; without this the dark theme's light ink is invisible on cream.
+  --global-text-color: #{$vf-screen-ink};
+  --global-text-color-light: #{$vf-screen-muted};
+  --global-bg-color: #{$vf-screen-color};
+  --global-card-bg-color: #{$vf-screen-color};
+  --global-divider-color: rgba(242, 238, 229, 0.17);
+  --global-theme-color: #{$vf-screen-orange};
+  --global-hover-color: #{$vf-screen-orange};
+  --camera-ink: #{$vf-screen-ink};
+  --camera-ink-soft: #{$vf-screen-muted};
+  --camera-lcd: #{$vf-screen-color};
+  --camera-gold: #{$vf-screen-orange};
+  --camera-edge: #353936;
+
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2rem 2.3rem 2.6rem;
+  color: $vf-screen-ink;
+
+  // One knob for the whole screen: everything inside is sized in em/rem, so
+  // raising this scales the page up with the zoom rather than per-element.
+  font-size: 1.22rem;
+
+  // a restrained scrollbar, so it reads as part of the device
+  scrollbar-width: thin;
+  scrollbar-color: rgba(242, 238, 229, 0.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(242, 238, 229, 0.24);
+    border-radius: 8px;
+  }
+
+}
+
+.viewfinder__content {
+  min-height: calc(100% - 4.5rem);
+  background: $vf-screen-color;
+}
+
+// --- on-screen control bar -------------------------------------------------
+// The site header is hidden on these pages: a camera screen carries its own UI.
+.vf-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(242, 238, 229, 0.18);
+  font-family: "Courier New", Courier, monospace;
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: $vf-screen-ink;
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__link {
+    position: relative;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: $vf-screen-ink !important;
+    opacity: 0.58;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &--active {
+      opacity: 1;
+      font-weight: 700;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -4px;
+        height: 2px;
+        background: $vf-screen-orange;
+      }
+    }
+  }
+
+  // back out to the camera, shaped like the body's MENU pill
+  &__menu {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: $vf-screen-ink !important;
+    background: #292d2a;
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: $vf-screen-orange;
+      color: #101312 !important;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .viewfinder__scroll {
+    padding: 1.1rem 1.1rem 1.6rem;
+    font-size: 0.92rem;
+  }
+
+  .vf-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+}

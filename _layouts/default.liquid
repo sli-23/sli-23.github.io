@@ -16,13 +16,47 @@
   </head>
 
   <!-- Body -->
-  <body class="{% if site.navbar_fixed %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}">
+  <body class="{% if site.navbar_fixed %}fixed-top-nav{% endif %} {% unless site.footer_fixed %}sticky-bottom-footer{% endunless %}{% if page.layout == 'post' %} camera-article-page{% endif %}">
     <!-- Header -->
     {% include header.liquid %}
 
     <!-- Content -->
     <div class="container mt-5" role="main">
-      {% if page.toc and page.toc.sidebar %}
+      {% comment %}
+        Viewfinder pages render inside the camera's screen frame. The frame's
+        size is pinned to the WebGL zoom endpoint in _sass/_viewfinder.scss, so
+        arriving here from the shutter animation is seamless.
+      {% endcomment %}
+      {% if page.viewfinder %}
+        {% comment %}
+          The same 3D camera as the homepage, already pushed in. The bezel is
+          real geometry, not a CSS border, and camera-hero.js sizes
+          .viewfinder__screen to the LCD's projected rectangle every frame — so
+          the page genuinely sits inside the 3D screen.
+        {% endcomment %}
+        <div
+          class="camera-hero viewfinder"
+          id="camera-hero"
+          data-zoomed="true"
+          data-cache-version="{{ site.time | date: '%s' }}"
+          data-routes='[
+            {"label":"RESUME","icon":"resume","url":"{{ '/cv/' | relative_url }}"},
+            {"label":"BLOG","icon":"blog","url":"{{ '/blog/' | relative_url }}"},
+            {"label":"INFO","icon":"info","url":"{{ '/info/' | relative_url }}"}
+          ]'
+        >
+          <canvas aria-hidden="true"></canvas>
+          <div class="viewfinder__screen">
+            <div class="viewfinder__scroll">
+              {% include viewfinder_bar.liquid %}
+              <div class="viewfinder__content" data-viewfinder-content>
+                {{ content }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <script type="module" src="{{ '/assets/js/camera-hero.js' | relative_url | bust_file_cache }}"></script>
+      {% elsif page.toc and page.toc.sidebar %}
         {% if page.toc.sidebar == 'right' %}
           <div class="row">
             <!-- main content area -->

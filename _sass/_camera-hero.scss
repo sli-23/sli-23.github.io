@@ -1,0 +1,324 @@
+// 3D camera homepage — canvas stage, annotation labels, shutter flash
+.camera-hero {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    touch-action: pan-y;
+  }
+}
+
+// Brief first-frame handoff on the homepage. Two solid panels cover the stage
+// while Three.js prepares its first real frame, then open like a camera shutter.
+.camera-entry {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--figure-color);
+  pointer-events: auto;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: calc(50% + 1px);
+    background: var(--hero-bg);
+    transform: translateY(0);
+    transition: transform 0.42s cubic-bezier(0.72, 0, 0.22, 1);
+    will-change: transform;
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    bottom: 0;
+  }
+}
+
+html.camera-returning-home .camera-entry {
+  display: none;
+}
+
+.camera-entry__status {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  transition:
+    opacity 0.14s ease,
+    transform 0.28s ease;
+}
+
+.camera-entry__reticle {
+  position: relative;
+  width: 4rem;
+  height: 2.6rem;
+  border: 1px solid #e0b85c;
+  opacity: 0.82;
+  animation: camera-entry-breathe 0.8s ease-in-out infinite alternate;
+}
+
+.camera-entry__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: #e0b85c;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 0 rgba(224, 184, 92, 0.22);
+  animation: camera-entry-pulse 0.8s ease-out infinite;
+}
+
+.camera-entry__label {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  transform: translateX(0.14em);
+  color: #f2eee5;
+  opacity: 0.72;
+}
+
+.homepage-hero--entered {
+  .camera-entry {
+    visibility: hidden;
+    pointer-events: none;
+    transition: visibility 0s linear 0.44s;
+
+    &::before {
+      transform: translateY(-101%);
+    }
+
+    &::after {
+      transform: translateY(101%);
+    }
+  }
+
+  .camera-entry__status {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes camera-entry-breathe {
+  from {
+    transform: scale(0.96);
+    opacity: 0.34;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 0.56;
+  }
+}
+
+@keyframes camera-entry-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(224, 184, 92, 0.26);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0.5rem rgba(224, 184, 92, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camera-entry::before,
+  .camera-entry::after {
+    transition-duration: 0.12s;
+  }
+
+  .camera-entry__reticle,
+  .camera-entry__dot {
+    animation: none;
+  }
+
+  .homepage-hero--entered .camera-entry {
+    transition-delay: 0.12s;
+  }
+}
+
+// Annotation labels, positioned each frame by projecting their 3D anchors
+// The hero background is always the design's blue, so these keep the design's
+// slate ink in both themes.
+.camera-label {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: #f2eee5;
+
+  .camera-hero--dark & {
+    color: #f2eee5;
+  }
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.6s ease 0.3s;
+
+  // opacity is driven from the JS so the annotations retire as the zoom starts
+  .camera-hero--ready & {
+    opacity: var(--label-opacity, 1);
+  }
+}
+
+.camera-label__copy--mobile {
+  display: none;
+}
+
+.camera-label--scroll {
+  transform: translate(-50%, -235%);
+  text-align: center;
+
+  // a real drawn arrow, so it scales with the label instead of relying on a
+  // tiny glyph
+  // Width comes from --arrow-w, which camera-hero.js sets each frame from the
+  // dial's projected on-screen width. The mask stretches (rather than
+  // `contain`, which would letterbox and cap the length).
+  &::after {
+    content: "";
+    display: block;
+    width: var(--arrow-w, 6rem);
+    height: 0.85rem;
+    margin: 0.55em auto 0;
+    background: #f2eee5;
+    -webkit-mask: var(--camera-arrow) center / 100% 100% no-repeat;
+    mask: var(--camera-arrow) center / 100% 100% no-repeat;
+  }
+}
+
+.camera-label--shoot {
+  display: inline-block;
+  padding: 0.78rem 0.9rem 0.72rem;
+  color: #f2eee5;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(0.8rem, 0.94vw, 0.96rem);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  background: #101312;
+  border: 1px solid #f2eee5;
+  box-shadow: 0.2rem 0.24rem 0 rgba(242, 238, 229, 0.34);
+  transform: translate(6rem, -3.15rem);
+
+  .camera-hero--dark & {
+    color: #f2eee5;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    right: calc(100% + 0.5rem);
+    top: 50%;
+    width: 6rem;
+    height: 3px;
+    background: linear-gradient(
+      to bottom,
+      #101312 0 50%,
+      #f2eee5 50% 100%
+    );
+    transform: rotate(-28deg);
+    transform-origin: right center;
+  }
+}
+
+.camera-hero {
+  --camera-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'%3E%3Cpath d='M9 5h182M9 5l9-3.7M9 5l9 3.7M191 5l-9-3.7M191 5l-9 3.7' fill='none' stroke='%23000' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+// Plain-links fallback: always in the DOM for crawlers and no-WebGL visitors
+.camera-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  font-family: "Courier New", Courier, monospace;
+
+  a {
+    color: #f2eee5;
+    text-decoration: none;
+    letter-spacing: 0.2em;
+    font-size: 0.95rem;
+    border-bottom: 2px solid #e0b85c;
+    padding-bottom: 0.2em;
+  }
+
+  .camera-hero--ready & {
+    display: none;
+  }
+}
+
+html[data-theme="dark"] .camera-fallback a {
+  color: #f2eee5;
+}
+
+@media (max-width: 768px) {
+  .camera-label {
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+  }
+
+  .camera-label__copy--desktop {
+    display: none;
+  }
+
+  .camera-label__copy--mobile {
+    display: inline;
+  }
+
+  .camera-label--scroll {
+    transform: translate(-50%, calc(-100% - var(--scroll-label-gap, 0.7rem)));
+
+    &::after {
+      height: 0.72rem;
+      margin-top: 0.48em;
+    }
+  }
+
+  .camera-label--shoot {
+    display: inline-block;
+    padding: 0.68rem 0.72rem 0.62rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    box-shadow: 0.16rem 0.19rem 0 rgba(242, 238, 229, 0.34);
+    left: 50% !important;
+    top: 68% !important;
+    transform: translate(-50%, 0);
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .camera-fallback {
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) and (max-height: 600px) {
+  .camera-label--shoot {
+    top: auto !important;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}

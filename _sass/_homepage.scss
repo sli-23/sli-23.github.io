@@ -1,6 +1,6 @@
 // Hide navbar, footer, and back-to-top on the homepage
 body:has(.homepage-hero) {
-  background: #ffffff;
+  background: #242625;
   #navbar {
     display: none;
   }
@@ -21,15 +21,19 @@ body:has(.homepage-hero) {
 }
 
 html[data-theme="dark"] body:has(.homepage-hero) {
-  background: #0a0a0a;
+  background: #1d1f1e;
 }
 
 .homepage-hero {
-  --figure-color: #000000;
-  --thread-color: #d51515;
-  --hero-bg: #ffffff;
+  --figure-color: #f2eee5;
+  --hero-bg: #242625;
+  --mission-stripe: #e0b85c;
+  --mission-cream: #f2eee5;
+  --mission-ink: #f2eee5;
+  --mission-muted: rgba(242, 238, 229, 0.62);
 
   position: relative;
+  isolation: isolate;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
   margin-top: -3rem;
@@ -43,9 +47,211 @@ html[data-theme="dark"] body:has(.homepage-hero) {
 }
 
 html[data-theme="dark"] .homepage-hero {
-  --figure-color: #f0ece8;
-  --thread-color: #d51515;
-  --hero-bg: #0a0a0a;
+  --figure-color: #f2eee5;
+  --hero-bg: #1d1f1e;
+}
+
+.mobile-experience-note {
+  display: none;
+}
+
+// Minimal backdrop: a live Seattle clock, two signal bands and a quiet grid.
+.mission-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mission-backdrop {
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 55% 48%, rgba(224, 184, 92, 0.045), transparent 34%),
+    var(--hero-bg);
+}
+
+.mission-backdrop__grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background-image:
+    linear-gradient(rgba(242, 238, 229, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 238, 229, 0.12) 1px, transparent 1px);
+  background-size: 4.5rem 4.5rem;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.58), transparent 82%);
+}
+
+.mission-backdrop__plus {
+  position: absolute;
+  top: 75%;
+  left: 4.5vw;
+  width: 2.8rem;
+  height: 2.8rem;
+  color: var(--mission-ink);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.28s ease 0.24s,
+    transform 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) 0.18s;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+  }
+
+  &::before {
+    width: 100%;
+    height: 2px;
+  }
+
+  &::after {
+    width: 2px;
+    height: 100%;
+  }
+}
+
+.mission-backdrop__pixels,
+.mission-backdrop__barcode {
+  position: absolute;
+  color: var(--mission-ink);
+  opacity: 0;
+  transition:
+    opacity 0.34s ease 0.32s,
+    transform 0.72s cubic-bezier(0.2, 0.75, 0.2, 1) 0.18s;
+}
+
+.mission-backdrop__pixels {
+  top: 41%;
+  right: 5.4vw;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: currentColor;
+  box-shadow:
+    1.08rem 1.08rem 0 currentColor,
+    0 2.16rem 0 currentColor;
+  transform: translateX(0.75rem);
+}
+
+.mission-backdrop__barcode {
+  right: 4.1vw;
+  bottom: 4.5%;
+  width: clamp(3.9rem, 5.2vw, 5.25rem);
+  height: clamp(2.3rem, 3.4vw, 3.35rem);
+  background:
+    linear-gradient(
+      90deg,
+      currentColor 0 8%,
+      transparent 8% 14%,
+      currentColor 14% 23%,
+      transparent 23% 30%,
+      currentColor 30% 37%,
+      transparent 37% 44%,
+      currentColor 44% 56%,
+      transparent 56% 62%,
+      currentColor 62% 70%,
+      transparent 70% 78%,
+      currentColor 78% 84%,
+      transparent 84% 90%,
+      currentColor 90% 100%
+    );
+  transform: translateY(0.8rem);
+}
+
+.mission-backdrop__clock {
+  position: absolute;
+  top: -0.055em;
+  left: -0.025em;
+  color: var(--mission-ink);
+  font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(6.5rem, 15vw, 15rem);
+  font-stretch: normal;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 0.8;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-1.5rem);
+  transform-origin: left top;
+  transition:
+    opacity 0.34s ease 0.08s,
+    transform 0.72s cubic-bezier(0.2, 0.75, 0.2, 1) 0.04s;
+}
+
+.mission-backdrop__band {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  transition:
+    opacity 0.24s ease 0.18s,
+    transform 0.78s cubic-bezier(0.2, 0.75, 0.2, 1) 0.08s;
+}
+
+.mission-backdrop__band--primary {
+  top: 64%;
+  left: -19%;
+  width: 82%;
+  height: clamp(10.5rem, 16vw, 15rem);
+  background: var(--mission-stripe);
+  transform: translate(-5rem, 4rem) rotate(-31deg);
+  transform-origin: center;
+}
+
+.mission-backdrop__band--signal {
+  top: 25%;
+  right: -20%;
+  width: 66%;
+  height: clamp(5.5rem, 8.5vw, 7.5rem);
+  background: var(--mission-stripe);
+  transform: translate(5rem, -4rem) rotate(-31deg);
+  transform-origin: center;
+}
+
+.homepage-hero--entered {
+  .mission-backdrop__clock {
+    opacity: 0.94;
+    transform: translateY(0);
+  }
+
+  .mission-backdrop__band {
+    opacity: 0.96;
+  }
+
+  .mission-backdrop__plus {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  .mission-backdrop__pixels,
+  .mission-backdrop__barcode {
+    opacity: 0.62;
+    transform: translate(0);
+  }
+
+  .mission-backdrop__band--primary {
+    transform: translate(0, 0) rotate(-31deg);
+  }
+
+  .mission-backdrop__band--signal {
+    transform: translate(0, 0) rotate(-31deg);
+  }
+}
+
+.mission-backdrop {
+  transition: opacity 0.22s ease;
+}
+
+.homepage-hero--zooming {
+  background: #101312;
+
+  .mission-backdrop {
+    opacity: 0;
+  }
 }
 
 // Artwork composition — both layers share the same viewBox
@@ -99,70 +305,6 @@ html[data-theme="dark"] .homepage-hero {
   overflow: visible;
 }
 
-// Editorial navigation — centered, gallery-like
-.homepage-nav {
-  position: absolute;
-  top: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 3em;
-
-  &__link {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 300;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--figure-color);
-    opacity: 0.5;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-
-    &:hover {
-      opacity: 0.85;
-      transform: translateY(-0.5px);
-    }
-  }
-}
-
-// Mode toggle specifics
-.mode-toggle {
-  display: inline;
-
-  &__sep {
-    margin: 0 0.25em;
-    opacity: 0.35;
-  }
-
-  &__label {
-    transition: opacity 0.3s ease;
-  }
-
-  &__label--light {
-    opacity: 0.4;
-  }
-
-  &__label--dark {
-    opacity: 1;
-  }
-}
-
-html[data-theme="light"] .mode-toggle {
-  .mode-toggle__label--light {
-    opacity: 1;
-  }
-  .mode-toggle__label--dark {
-    opacity: 0.4;
-  }
-}
-
 .artwork-credit {
   position: absolute;
   bottom: -1.2rem;
@@ -192,9 +334,19 @@ html[data-theme="light"] .mode-toggle {
 }
 
 @media (max-width: 768px) {
+  body:has(.homepage-hero) {
+    padding-top: 0 !important;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   .homepage-hero {
-    height: 85vh;
-    min-height: 500px;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    margin-top: 0;
+    margin-left: 0;
   }
 
   .artwork-container {
@@ -202,12 +354,101 @@ html[data-theme="light"] .mode-toggle {
     max-height: 450px;
   }
 
-  .homepage-nav {
-    top: 1.5rem;
-    gap: 1.5em;
+  .mission-backdrop {
+    background:
+      radial-gradient(circle at 53% 54%, rgba(224, 184, 92, 0.07), transparent 38%),
+      var(--hero-bg);
+  }
 
-    &__link {
-      font-size: 0.75rem;
+  .mission-backdrop__grid {
+    opacity: 0.09;
+    background-size: 3rem 3rem;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 88%);
+  }
+
+  .homepage-hero .mission-backdrop__clock {
+    top: max(2.25rem, calc(env(safe-area-inset-top) + 1rem)) !important;
+    left: -0.055em;
+    display: block;
+    font-size: clamp(4.35rem, 17vw, 5.8rem);
+    line-height: 1;
+    opacity: 0;
+  }
+
+  .mission-backdrop__band--primary {
+    top: 51%;
+    left: -10%;
+    width: 64%;
+    height: 25%;
+    clip-path: polygon(0 66%, 100% 0, 100% 28%, 0 94%);
+    transform: translate(-2rem, 1.5rem);
+  }
+
+  .mission-backdrop__band--signal {
+    top: 27%;
+    right: -8%;
+    width: 42%;
+    height: 18%;
+    clip-path: polygon(0 72%, 100% 8%, 100% 38%, 0 100%);
+    transform: translate(2rem, -1.5rem);
+  }
+
+  .homepage-hero--entered {
+    .mission-backdrop__band--primary,
+    .mission-backdrop__band--signal {
+      transform: translate(0, 0);
+    }
+  }
+
+  .mission-backdrop__plus {
+    top: 68%;
+    left: 1.1rem;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .mission-backdrop__pixels {
+    top: 28%;
+    right: 1.05rem;
+    width: 0.62rem;
+    height: 0.62rem;
+    box-shadow:
+      0.66rem 0.66rem 0 currentColor,
+      0 1.32rem 0 currentColor;
+  }
+
+  .mission-backdrop__barcode {
+    right: 1rem;
+    bottom: max(1.35rem, env(safe-area-inset-bottom));
+    width: 3.15rem;
+    height: 1.85rem;
+  }
+
+  .mobile-experience-note {
+    position: absolute;
+    top: max(6.75rem, calc(env(safe-area-inset-top) + 6.25rem));
+    left: 1rem;
+    bottom: auto;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    gap: 0.48rem;
+    max-width: calc(100% - 2rem);
+    margin: 0;
+    color: rgba(242, 238, 229, 0.58);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    white-space: nowrap;
+
+    &::before {
+      flex: 0 0 auto;
+      width: 0.42rem;
+      height: 0.42rem;
+      border: 1px solid var(--mission-stripe);
+      content: "";
     }
   }
 }

@@ -14,6 +14,7 @@ pagination:
   trail:
     before: 1 # The number of links before the current page
     after: 3 # The number of links after the current page
+viewfinder: true
 ---
 
 <div class="post">
@@ -29,35 +30,6 @@ pagination:
       </div>
       <h4 class="blog-description">{{ site.blog_description }}</h4>
     </div>
-  {% endif %}
-{% endif %}
-
-{% if site.display_tags and site.display_tags.size > 0 or site.display_categories and site.display_categories.size > 0 %}
-{% if paginator.page == 1 or paginator.page == nil %}
-
-  <div class="tag-category-list">
-    <ul class="p-0 m-0">
-      {% for tag in site.display_tags %}
-        <li>
-          <i class="fa-solid fa-hashtag fa-sm"></i> <a href="{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}">{{ tag }}</a>
-        </li>
-        {% unless forloop.last %}
-          <p>&bull;</p>
-        {% endunless %}
-      {% endfor %}
-      {% if site.display_categories.size > 0 and site.display_tags.size > 0 %}
-        <p>&bull;</p>
-      {% endif %}
-      {% for category in site.display_categories %}
-        <li>
-          <i class="fa-solid fa-tag fa-sm"></i> <a href="{{ category | slugify | prepend: '/blog/category/' | relative_url }}">{{ category }}</a>
-        </li>
-        {% unless forloop.last %}
-          <p>&bull;</p>
-        {% endunless %}
-      {% endfor %}
-    </ul>
-  </div>
   {% endif %}
 {% endif %}
 
@@ -77,9 +49,6 @@ pagination:
       {% assign read_time = post.feed_content | strip_html | number_of_words: "auto" | divided_by: 180 | plus: 1 %}
     {% endif %}
     {% assign year = post.date | date: "%Y" %}
-    {% assign tags = post.tags | join: "" %}
-    {% assign categories = post.categories | join: "" %}
-
     <li class="post-item">
       <span class="post-item__number">#{{ forloop.index }}</span>
       <div class="post-item__left">
@@ -97,14 +66,6 @@ pagination:
       <div class="post-item__right">
         <span class="post-item__date">{{ post.date | date: '%b %d, %Y' }}</span>
         <span class="post-item__reading"><i class="fa-solid fa-clock fa-sm"></i> {{ read_time }} min</span>
-        <div class="post-item__tags">
-          {% for tag in post.tags %}
-            <a href="{{ tag | slugify | prepend: '/blog/tag/' | prepend: site.baseurl}}">#{{ tag }}</a>
-          {% endfor %}
-          {% for category in post.categories %}
-            <a href="{{ category | slugify | prepend: '/blog/category/' | prepend: site.baseurl}}">#{{ category }}</a>
-          {% endfor %}
-        </div>
       </div>
     </li>
 
