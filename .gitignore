@@ -9,5 +9,5 @@ _site
 Gemfile.lock
 assets/libs/
 node_modules/
-vendor
+/vendor/
 .idea
