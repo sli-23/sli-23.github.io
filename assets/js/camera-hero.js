@@ -23,7 +23,7 @@
 // Keep the rendering runtime inside the site bundle. Depending on a third-party
 // CDN here made the entire camera disappear whenever that request was blocked
 // or slow, because ES modules stop before init() when an import cannot resolve.
-import * as THREE from "../vendor/three.module.min.js";
+import * as THREE from "../vendor/three.module.min.js?v=r170-20260916-1";
 
 /* ------------------------------------------------------------------ *
  * 1. PALETTE — lifted straight from the design file
