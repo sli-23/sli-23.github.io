@@ -87,6 +87,29 @@ if (window.__cameraSkipEntry) {
     <span class="mission-backdrop__barcode"></span>
   </div>
 
+  <div class="menu-cut-burst" data-menu-cut-burst aria-hidden="true">
+    <span class="menu-cut-burst__ghost">
+      <svg viewBox="0 0 256 256" aria-hidden="true">
+        <path
+          d="M62 204V119C62 68 91 42 128 42s66 26 66 77v85q-16-20-32 0-17-23-34 0-17-23-34 0-16-20-32 0Z"
+        ></path>
+        <ellipse cx="103" cy="119" rx="9" ry="13"></ellipse>
+        <ellipse cx="153" cy="119" rx="9" ry="13"></ellipse>
+        <circle cx="128" cy="157" r="8"></circle>
+      </svg>
+    </span>
+    <span class="menu-cut-burst__disc menu-cut-burst__disc--gray"></span>
+    <span class="menu-cut-burst__wedge menu-cut-burst__wedge--gray"></span>
+    <span class="menu-cut-burst__wedge menu-cut-burst__wedge--cream"></span>
+    <span class="menu-cut-burst__slash"></span>
+    <span
+      class="menu-cut-burst__label menu-cut-burst__label--menu"
+      data-menu-cut-year
+    >{{ 'now' | date: '%Y' }}</span>
+    <span class="menu-cut-burst__label menu-cut-burst__label--index" data-menu-cut-date></span>
+    <span class="menu-cut-burst__cross"></span>
+  </div>
+
   <time class="mobile-home-clock" data-seattle-clock aria-label="Current Seattle time">--:--:--</time>
 
   <div class="camera-entry" aria-hidden="true">

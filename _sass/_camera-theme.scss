@@ -612,26 +612,6 @@ body:not(:has(.homepage-hero)) .container.mt-5 {
     inset 0 0 3rem rgba(0, 0, 0, 0.28);
   animation: resumeTableArrive 0.55s cubic-bezier(0.22, 0.68, 0.2, 1) both;
 
-  // Quiet registration marks keep the scene related to the camera UI without
-  // placing more words over the illustration.
-  &::after {
-    position: absolute;
-    inset: 0.8rem;
-    z-index: 7;
-    pointer-events: none;
-    content: "";
-    opacity: 0.32;
-    background:
-      linear-gradient(var(--camera-gold), var(--camera-gold)) left top / 1.2rem 1px no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) left top / 1px 1.2rem no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) right top / 1.2rem 1px no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) right top / 1px 1.2rem no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) left bottom / 1.2rem 1px no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) left bottom / 1px 1.2rem no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) right bottom / 1.2rem 1px no-repeat,
-      linear-gradient(var(--camera-gold), var(--camera-gold)) right bottom / 1px 1.2rem no-repeat;
-  }
-
   img {
     position: absolute;
     display: block;
@@ -663,14 +643,196 @@ body:not(:has(.homepage-hero)) .container.mt-5 {
   transform: translate(-50%, -50%);
 }
 
-.resume-table-scene .resume-table-scene__plate {
+.resume-table-scene__plate-control {
+  position: absolute;
   z-index: 2;
   top: 52%;
   left: 54.25%;
   width: 43%;
-  height: auto;
+  aspect-ratio: 1362 / 998;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  border: 0;
+  border-radius: 50%;
+  outline: none;
+  color: var(--camera-gold);
+  background: transparent;
   transform: translate(-50%, -50%) rotate(-1.25deg);
+  transform-origin: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.resume-table-scene .resume-table-scene__plate {
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: translate3d(0, 0, 0);
   filter: drop-shadow(0 0.5rem 0.65rem rgba(0, 0, 0, 0.2));
+  transition:
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.24s ease;
+}
+
+.resume-table-scene__plate-scribble {
+  position: absolute;
+  top: 0;
+  left: -10%;
+  z-index: 2;
+  width: 100%;
+  height: 92%;
+  opacity: 0;
+  transform: rotate(-4deg) scale(0.88);
+  transform-origin: center;
+  transition:
+    opacity 0.2s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  path:nth-child(1) {
+    stroke: rgba(58, 60, 58, 0.9);
+    stroke-width: 3.2;
+  }
+
+  path:nth-child(2) {
+    stroke: rgba(166, 166, 160, 0.76);
+    stroke-width: 2.2;
+  }
+
+  path:nth-child(3) {
+    stroke: rgba(88, 90, 87, 0.68);
+    stroke-width: 1.8;
+  }
+
+  path:nth-child(4) {
+    stroke: rgba(44, 46, 45, 0.64);
+    stroke-width: 1.6;
+  }
+
+  path:nth-child(5) {
+    stroke: rgba(144, 144, 138, 0.64);
+    stroke-width: 2.5;
+  }
+}
+
+.resume-table-scene__price-burst {
+  position: absolute;
+  top: 17.5%;
+  left: 48.5%;
+  z-index: 10;
+  color: #f2eee5;
+  font-family: $camera-mono;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.82;
+  text-shadow:
+    0.055em 0.065em 0 #333632,
+    0 0.16em 0.42em rgba(0, 0, 0, 0.42);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(-50%, 1rem, 0) rotate(-5deg) scale(0.38);
+  transform-origin: 50% 70%;
+  pointer-events: none;
+}
+
+.resume-table-scene--price-open {
+  .resume-table-scene__price-burst {
+    visibility: visible;
+    animation:
+      resumeDishPricePop 0.72s cubic-bezier(0.16, 1, 0.3, 1) both,
+      resumeDishPriceFloat 2.2s ease-in-out 0.72s infinite;
+  }
+}
+
+.resume-table-scene--price-closing .resume-table-scene__price-burst {
+  animation: resumeDishPriceOut 0.28s ease-in both;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .resume-table-scene__plate-control:hover,
+  .resume-table-scene__plate-control:focus-visible {
+    .resume-table-scene__plate {
+      transform: translate3d(0, -0.34rem, 0) scale(1.022);
+      filter:
+        drop-shadow(0 1.15rem 1.05rem rgba(0, 0, 0, 0.68))
+        drop-shadow(0 0 0.92rem rgba(151, 154, 149, 0.5));
+    }
+
+    .resume-table-scene__plate-scribble {
+      opacity: 1;
+      transform: rotate(-2deg) scale(1);
+    }
+  }
+}
+
+.resume-table-scene__plate-control:active .resume-table-scene__plate {
+  transform: translate3d(0, -0.08rem, 0) scale(0.992);
+}
+
+@keyframes resumeDishPricePop {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, 1rem, 0) rotate(-5deg) scale(0.38);
+  }
+
+  42% {
+    opacity: 1;
+    transform: translate3d(-50%, -0.35rem, 0) rotate(1.2deg) scale(1.14);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translate3d(-50%, 0.08rem, 0) rotate(-0.45deg) scale(0.96);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) rotate(0) scale(1);
+  }
+}
+
+@keyframes resumeDishPriceFloat {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) rotate(-0.2deg) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate3d(-50%, -0.3rem, 0) rotate(0.35deg) scale(1.025);
+  }
+}
+
+@keyframes resumeDishPriceOut {
+  from {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(-50%, -0.3rem, 0) scale(1.08);
+  }
 }
 
 .resume-table-scene .resume-table-scene__utensil {
@@ -730,6 +892,20 @@ body:not(:has(.homepage-hero)) .container.mt-5 {
 
 .resume-table-scene__motion--right .resume-table-scene__hand {
   animation: resumeHandTrembleRight 2.1s ease-in-out -0.35s infinite;
+}
+
+.resume-table-scene--price-open {
+  .resume-table-scene__tableau {
+    animation: resumeTablePriceJolt 0.44s linear both;
+  }
+
+  .resume-table-scene__motion--left .resume-table-scene__hand {
+    animation: resumeHandTrembleLeftActive 0.72s linear infinite;
+  }
+
+  .resume-table-scene__motion--right .resume-table-scene__hand {
+    animation: resumeHandTrembleRightActive 0.82s linear infinite;
+  }
 }
 
 @keyframes resumeTableArrive {
@@ -804,6 +980,284 @@ body:not(:has(.homepage-hero)) .container.mt-5 {
   78% {
     transform: translate3d(1px, 1px, 0) rotate(0.07deg);
   }
+}
+
+@keyframes resumeHandTrembleLeftActive {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  13% {
+    transform: translate3d(-6px, 2px, 0) rotate(-0.9deg);
+  }
+
+  29% {
+    transform: translate3d(5px, -3px, 0) rotate(0.75deg);
+  }
+
+  46% {
+    transform: translate3d(-5px, 3px, 0) rotate(-1deg);
+  }
+
+  63% {
+    transform: translate3d(6px, -2px, 0) rotate(0.9deg);
+  }
+
+  81% {
+    transform: translate3d(-4px, -2px, 0) rotate(-0.65deg);
+  }
+}
+
+@keyframes resumeHandTrembleRightActive {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  16% {
+    transform: translate3d(6px, -2px, 0) rotate(0.9deg);
+  }
+
+  34% {
+    transform: translate3d(-5px, 3px, 0) rotate(-0.8deg);
+  }
+
+  52% {
+    transform: translate3d(5px, 2px, 0) rotate(1deg);
+  }
+
+  70% {
+    transform: translate3d(-6px, -3px, 0) rotate(-0.9deg);
+  }
+
+  87% {
+    transform: translate3d(4px, 2px, 0) rotate(0.65deg);
+  }
+}
+
+@keyframes resumeTablePriceJolt {
+  0%,
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  16% {
+    transform: translate3d(calc(-50% - 2px), 1px, 0);
+  }
+
+  32% {
+    transform: translate3d(calc(-50% + 3px), -1px, 0);
+  }
+
+  48% {
+    transform: translate3d(calc(-50% - 2px), 1px, 0);
+  }
+
+  66% {
+    transform: translate3d(calc(-50% + 1px), 0, 0);
+  }
+
+  82% {
+    transform: translate3d(calc(-50% - 1px), 0, 0);
+  }
+}
+
+// --- Fine-dining dish note and restrained chef profile --------------------
+.signature-dish {
+  display: grid;
+  grid-template-columns: minmax(6rem, 18%) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: baseline;
+  margin-top: 1.25rem;
+  padding: 0.8rem 0 0.2rem;
+}
+
+.signature-dish__label {
+  color: var(--camera-gold);
+  font-family: $camera-serif;
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.signature-dish__copy {
+  h4 {
+    margin: 0;
+    color: var(--camera-gold);
+    font-family: $camera-mono;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+}
+
+.signature-dish__composition {
+  margin: 0.45rem 0 0;
+  color: var(--global-text-color) !important;
+  font-family: $camera-serif;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  font-style: italic;
+  line-height: 1.5;
+  opacity: 0.82;
+}
+
+.chef-profile {
+  display: grid;
+  grid-template-columns: minmax(190px, 31%) minmax(0, 1fr);
+  gap: clamp(1.8rem, 4vw, 3.8rem);
+  align-items: center;
+  padding: 0.3rem 0 0.7rem;
+}
+
+.chef-profile__visual {
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  isolation: isolate;
+  justify-self: start;
+  cursor: pointer;
+}
+
+.chef-profile__portrait {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: transparent;
+
+  picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 94%, rgba(0, 0, 0, 0.82) 97%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 94%, rgba(0, 0, 0, 0.82) 97%, transparent 100%);
+    transition:
+      filter 0.28s ease,
+      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chef-profile__visual:hover .chef-profile__portrait img {
+    filter: brightness(1.07) saturate(1.08) contrast(1.025);
+    transform: translateY(-2px);
+  }
+}
+
+.chef-profile__copy {
+  width: min(100%, 34rem);
+  justify-self: center;
+  padding: 1rem 0;
+}
+
+.chef-profile__identity {
+  min-width: 0;
+}
+
+.chef-profile__role {
+  margin: 0 0 0.5rem;
+  color: var(--camera-gold) !important;
+  font-family: $camera-mono;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.chef-profile__copy h4 {
+  margin: 0;
+  color: var(--global-text-color);
+  font-family: $camera-mono;
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.chef-profile__bio {
+  max-width: 38rem;
+  margin: 0.65rem 0 0;
+  color: var(--global-text-color) !important;
+  font-family: $camera-serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  opacity: 0.78;
+}
+
+.chef-profile__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
+  color: var(--camera-gold) !important;
+  text-decoration: none !important;
+  transition:
+    color 0.25s ease,
+    gap 0.25s ease;
+
+  &::before {
+    width: 1.75rem;
+    height: 1px;
+    flex: 0 0 auto;
+    background: currentColor;
+    content: "";
+    opacity: 0.6;
+    transition: width 0.25s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--global-text-color) !important;
+    gap: 0.9rem;
+
+    &::before {
+      width: 2.4rem;
+    }
+
+    .chef-profile__search-arrow {
+      transform: translate3d(2px, -2px, 0);
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--camera-gold);
+    outline-offset: 4px;
+  }
+}
+
+.chef-profile__search-label {
+  color: inherit !important;
+  font-family: $camera-mono;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.chef-profile__search-arrow {
+  color: inherit !important;
+  font-family: $camera-mono;
+  font-size: 0.88rem;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
 }
 
 // --- rows: meta column left, content right --------------------------------
@@ -939,9 +1393,15 @@ h6.title {
     width: 76%;
   }
 
-  .resume-table-scene .resume-table-scene__plate {
+  .resume-table-scene__plate-control {
     left: 54.75%;
     width: 48%;
+  }
+
+  .resume-table-scene__price-burst {
+    top: 17.5%;
+    left: 48%;
+    font-size: clamp(2.3rem, 12vw, 4rem);
   }
 
   .resume-table-scene .resume-table-scene__utensil--fork {
@@ -954,13 +1414,67 @@ h6.title {
     width: 4%;
   }
 
+  .signature-dish {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .chef-profile {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .chef-profile__visual {
+    width: min(100%, 250px);
+    margin: 0 auto;
+    justify-self: center;
+  }
+
+  .chef-profile__copy {
+    width: 100%;
+    justify-self: start;
+    padding: 1rem 0 0.25rem;
+  }
+
+  .chef-profile__search {
+    margin-top: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .resume-table-scene,
+  .resume-table-scene__tableau,
   .resume-table-scene__motion,
   .resume-table-scene__hand {
     animation: none;
+  }
+
+  .resume-table-scene--price-open {
+    .resume-table-scene__tableau,
+    .resume-table-scene__motion--left .resume-table-scene__hand,
+    .resume-table-scene__motion--right .resume-table-scene__hand {
+      animation: none;
+    }
+  }
+
+  .resume-table-scene .resume-table-scene__plate,
+  .resume-table-scene__plate-scribble,
+  .resume-table-scene__price-burst {
+    transition: none;
+  }
+
+  .resume-table-scene--price-open .resume-table-scene__price-burst {
+    animation: none;
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  .resume-table-scene--price-closing .resume-table-scene__price-burst {
+    opacity: 0;
+  }
+
+  .chef-profile__visual:hover .chef-profile__portrait img {
+    transform: none;
   }
 }
 
@@ -1192,6 +1706,128 @@ a.post-title {
 
     &:hover {
       color: var(--camera-gold) !important;
+      opacity: 1;
+    }
+  }
+}
+
+// --- Desktop game-style cursor --------------------------------------------
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html.site-custom-cursor,
+  html.site-custom-cursor body,
+  html.site-custom-cursor body * {
+    cursor: none !important;
+  }
+
+  html.site-custom-cursor {
+    input:not([type="button"]):not([type="submit"]):not([type="reset"]),
+    textarea,
+    [contenteditable="true"] {
+      cursor: text !important;
+    }
+
+    select {
+      cursor: default !important;
+    }
+  }
+
+  .site-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2147483647;
+    color: #fff;
+    opacity: 0;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+
+    &.is-visible:not(.is-native) {
+      opacity: 1;
+    }
+  }
+
+  .site-cursor__ring,
+  .site-cursor__dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .site-cursor__ring {
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    border: 1.5px solid currentColor;
+    opacity: 0.7;
+    transition:
+      width 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      height 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      margin 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+      border-radius 0.2s ease,
+      border-width 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .site-cursor__dot {
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    background: currentColor;
+    opacity: 0.62;
+    transition:
+      width 0.18s ease,
+      height 0.18s ease,
+      margin 0.18s ease,
+      opacity 0.18s ease;
+  }
+
+  .site-cursor.is-action {
+    .site-cursor__ring {
+      width: 44px;
+      height: 44px;
+      margin: -22px 0 0 -22px;
+      border-width: 2px;
+      opacity: 0.96;
+    }
+
+    .site-cursor__dot {
+      width: 6px;
+      height: 6px;
+      margin: -3px 0 0 -3px;
+      opacity: 0.9;
+    }
+  }
+
+  .site-cursor.is-drag {
+    .site-cursor__ring {
+      width: 48px;
+      height: 20px;
+      margin: -10px 0 0 -24px;
+      border-radius: 999px;
+      border-width: 2px;
+      opacity: 0.96;
+    }
+
+    .site-cursor__dot {
+      opacity: 0.9;
+    }
+  }
+
+  .site-cursor.is-pressed {
+    .site-cursor__ring {
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border-width: 2px;
+      opacity: 1;
+    }
+
+    .site-cursor__dot {
       opacity: 1;
     }
   }

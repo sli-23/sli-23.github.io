@@ -120,6 +120,13 @@ layout: default
               {% endcase %}
             </div>
           </div>
+          {% if data[0] == 'work' %}
+            <a class="anchor" id="chef-profile"></a>
+            <div class="card mt-3 p-3 chef-profile-card">
+              <h3 class="card-title font-weight-medium">Chef's Profile</h3>
+              <div>{% include resume/chef_profile.liquid %}</div>
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
     </article>

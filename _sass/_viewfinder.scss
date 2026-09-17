@@ -137,6 +137,152 @@ body:has(.viewfinder) {
   }
 }
 
+.viewfinder__screen--chef-signal {
+  .viewfinder__scroll {
+    animation: viewfinder-chef-signal-flicker 0.72s linear both;
+  }
+}
+
+.viewfinder__scan-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  pointer-events: none;
+
+  &::before {
+    position: absolute;
+    top: -18%;
+    right: 0;
+    left: 0;
+    height: 16%;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(242, 238, 229, 0.16) 42%,
+      rgba(224, 184, 92, 0.13) 53%,
+      transparent
+    );
+    content: "";
+    filter: blur(1px);
+    opacity: 0;
+    animation: viewfinder-chef-signal-scan 0.72s cubic-bezier(0.22, 0.68, 0.2, 1) both;
+  }
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, transparent 0 9%, rgba(242, 238, 229, 0.28) 9% 46%, transparent 46%) 0 34% / 100% 3px no-repeat,
+      linear-gradient(90deg, transparent 0 43%, rgba(224, 184, 92, 0.22) 43% 88%, transparent 88%) 0 61% / 100% 3px no-repeat;
+    content: "";
+    opacity: 0;
+    animation: viewfinder-chef-signal-slices 0.72s steps(1, end) both;
+  }
+}
+
+@keyframes viewfinder-chef-signal-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+
+  16% {
+    opacity: 0.94;
+    filter: brightness(0.94);
+  }
+
+  27% {
+    transform: translateX(-2px);
+  }
+
+  31% {
+    transform: translateX(2px);
+  }
+
+  35% {
+    opacity: 1;
+    filter: brightness(1.09) contrast(1.035);
+    transform: none;
+  }
+
+  54% {
+    opacity: 0.96;
+    filter: brightness(0.96);
+  }
+
+  58% {
+    transform: translateX(2px);
+  }
+
+  61% {
+    transform: translateX(-2px);
+  }
+
+  64% {
+    transform: none;
+  }
+
+  72% {
+    opacity: 1;
+    filter: brightness(1.04);
+  }
+}
+
+@keyframes viewfinder-chef-signal-scan {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+
+  18% {
+    opacity: 0.68;
+  }
+
+  76% {
+    opacity: 0.34;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(720%);
+  }
+}
+
+@keyframes viewfinder-chef-signal-slices {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  27% {
+    opacity: 0.58;
+    transform: translateX(-6px);
+  }
+
+  31% {
+    opacity: 0.28;
+    transform: translateX(5px);
+  }
+
+  35%,
+  57% {
+    opacity: 0;
+  }
+
+  59% {
+    opacity: 0.4;
+    transform: translateX(5px);
+  }
+
+  63% {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+}
+
 .viewfinder__scroll {
   // The screen belongs to the device, so it keeps the design's colours in both
   // themes; without this the dark theme's light ink is invisible on cream.
@@ -268,5 +414,17 @@ body:has(.viewfinder) {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewfinder__screen--chef-signal .viewfinder__scroll,
+  .viewfinder__scan-flash::before,
+  .viewfinder__scan-flash::after {
+    animation: none !important;
+  }
+
+  .viewfinder__scan-flash {
+    display: none;
   }
 }

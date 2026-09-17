@@ -157,6 +157,21 @@ let hoverName = null;
 
 let reducedMotion = false;
 let homeReturnMotionTimer = 0;
+let menuCutTimer = 0;
+let menuCutDelayTimer = 0;
+let menuCutFrame = 0;
+let menuCutStartFrame = 0;
+let dishPriceInteractionBound = false;
+const dishPriceTimers = new WeakMap();
+const DISH_PRICE_VISIBLE_MS = 10000;
+const DISH_PRICE_EXIT_MS = 280;
+
+const menuCutDateFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/Los_Angeles",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
 /* ------------------------------------------------------------------ *
  * 4. COMMANDS
@@ -220,9 +235,102 @@ function shoot() {
 function retract() {
   if (ui.navigating) return;
   if (zoom.state === "idle" && zoom.pos === 0) return;
+
+  if (ui.inlineViewfinder) {
+    const homeUrl =
+      homePageState?.url ||
+      document.querySelector(".vf-bar__menu")?.href ||
+      new URL("/", window.location.href).href;
+    beginViewfinderExit(homeUrl);
+    return;
+  }
+
   ui.pendingRoute = null;
   screen.setMode("menu");
   retargetZoom(0, "pulling_out");
+}
+
+function triggerMenuCutBurst({ delay = 0 } = {}) {
+  const burst = document.querySelector("[data-menu-cut-burst]");
+  if (!burst || reducedMotion) return;
+
+  const yearLabel = burst.querySelector("[data-menu-cut-year]");
+  const dateLabel = burst.querySelector("[data-menu-cut-date]");
+  if (yearLabel || dateLabel) {
+    const parts = menuCutDateFormatter.formatToParts(new Date()).reduce((result, part) => {
+      result[part.type] = part.value;
+      return result;
+    }, {});
+
+    if (yearLabel) yearLabel.textContent = parts.year;
+    if (dateLabel) dateLabel.textContent = `${parts.month} / ${parts.day}`;
+  }
+
+  window.clearTimeout(menuCutTimer);
+  window.clearTimeout(menuCutDelayTimer);
+  cancelAnimationFrame(menuCutFrame);
+  cancelAnimationFrame(menuCutStartFrame);
+  burst.classList.remove("is-active");
+
+  const start = () => {
+    // Two animation frames restart the CSS sequence without a synchronous
+    // layout read. That keeps the first frame of the camera pull-back fluid.
+    menuCutFrame = requestAnimationFrame(() => {
+      menuCutStartFrame = requestAnimationFrame(() => {
+        burst.classList.add("is-active");
+        menuCutTimer = window.setTimeout(() => {
+          burst.classList.remove("is-active");
+          menuCutTimer = 0;
+        }, 1320);
+      });
+    });
+  };
+
+  if (delay > 0) menuCutDelayTimer = window.setTimeout(start, delay);
+  else start();
+}
+
+function bindDishPriceInteraction() {
+  if (dishPriceInteractionBound) return;
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const trigger = event.target.closest("[data-dish-price-trigger]");
+    if (!trigger) return;
+
+    const scene = trigger.closest(".resume-table-scene");
+    const priceTag = scene?.querySelector("[data-dish-price]");
+    if (!scene || !priceTag) return;
+
+    const activeTimers = dishPriceTimers.get(scene);
+    if (activeTimers) {
+      window.clearTimeout(activeTimers.fade);
+      window.clearTimeout(activeTimers.hide);
+    }
+
+    scene.classList.remove("resume-table-scene--price-closing");
+    scene.classList.add("resume-table-scene--price-open");
+    trigger.setAttribute("aria-expanded", "true");
+    priceTag.setAttribute("aria-hidden", "false");
+
+    const timers = { fade: 0, hide: 0 };
+    timers.fade = window.setTimeout(() => {
+      scene.classList.add("resume-table-scene--price-closing");
+      timers.hide = window.setTimeout(() => {
+        scene.classList.remove(
+          "resume-table-scene--price-open",
+          "resume-table-scene--price-closing",
+        );
+        trigger.setAttribute("aria-expanded", "false");
+        priceTag.setAttribute("aria-hidden", "true");
+        dishPriceTimers.delete(scene);
+      }, DISH_PRICE_EXIT_MS);
+    }, DISH_PRICE_VISIBLE_MS - DISH_PRICE_EXIT_MS);
+
+    dishPriceTimers.set(scene, timers);
+  });
+
+  dishPriceInteractionBound = true;
 }
 
 /** Re-aims from wherever the camera currently is, so a mid-travel reversal is
@@ -1434,6 +1542,7 @@ function bindInput() {
     }
     const over = pick(e);
     hoverName = over;
+    canvas.dataset.cursorMode = over === "dial" ? "drag" : over ? "action" : "";
     canvas.style.cursor = over === "dial" ? "ew-resize" : over ? "pointer" : "default";
   });
 
@@ -1442,6 +1551,7 @@ function bindInput() {
     pointer.targetY = 0;
     hoverName = null;
     drag = null;
+    delete canvas.dataset.cursorMode;
   });
 
   canvas.addEventListener("pointerdown", (e) => {
@@ -1478,7 +1588,10 @@ function bindInput() {
       return;
     }
     if (target === "shutter") shoot();
-    else if (target === "menu") retract();
+    else if (target === "menu") {
+      retract();
+      triggerMenuCutBurst();
+    }
   });
 
   // Scrolling over the hero spins the dial — but only on the menu screen. On
@@ -1531,6 +1644,11 @@ const labelAnchors = {};
 let screenOverlay = null;
 let naturalRect = null;
 const tmpVec = new THREE.Vector3();
+let chefSignalScreen = null;
+let chefSignalOverlay = null;
+let chefSignalTimer = 0;
+let chefSignalHoverTarget = null;
+let chefSignalHoverHandler = null;
 
 function applyState() {
   // Push the lens toward the LCD. The rest and target positions are recomputed
@@ -1726,6 +1844,66 @@ function setViewfinderMetadata(page) {
   if (canonical && page.canonical) canonical.setAttribute("href", page.canonical);
 }
 
+function clearChefSignalEffect() {
+  if (chefSignalHoverTarget && chefSignalHoverHandler) {
+    chefSignalHoverTarget.removeEventListener("mouseenter", chefSignalHoverHandler);
+  }
+  chefSignalHoverTarget = null;
+  chefSignalHoverHandler = null;
+
+  if (chefSignalTimer) {
+    window.clearTimeout(chefSignalTimer);
+    chefSignalTimer = 0;
+  }
+
+  chefSignalOverlay?.remove();
+  chefSignalOverlay = null;
+  chefSignalScreen?.classList.remove("viewfinder__screen--chef-signal");
+  chefSignalScreen = null;
+}
+
+function triggerChefSignalScan(screenElement) {
+  if (!screenElement || reducedMotion || chefSignalTimer || chefSignalOverlay) return;
+
+  const overlay = document.createElement("span");
+  overlay.className = "viewfinder__scan-flash";
+  overlay.setAttribute("aria-hidden", "true");
+  screenElement.appendChild(overlay);
+
+  chefSignalScreen = screenElement;
+  chefSignalOverlay = overlay;
+  screenElement.classList.add("viewfinder__screen--chef-signal");
+
+  chefSignalTimer = window.setTimeout(() => {
+    if (chefSignalScreen !== screenElement || chefSignalOverlay !== overlay) return;
+    screenElement.classList.remove("viewfinder__screen--chef-signal");
+    overlay.remove();
+    chefSignalOverlay = null;
+    chefSignalScreen = null;
+    chefSignalTimer = 0;
+  }, 840);
+}
+
+function bindChefSignalHover() {
+  clearChefSignalEffect();
+
+  const screenElement = screenOverlay || document.querySelector(".viewfinder__screen");
+  const chefPortrait = screenElement?.querySelector(".chef-profile__visual");
+  if (
+    reducedMotion ||
+    !screenElement ||
+    !chefPortrait ||
+    !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  ) {
+    return;
+  }
+
+  const handler = () => triggerChefSignalScan(screenElement);
+  chefPortrait.addEventListener("mouseenter", handler);
+  chefSignalHoverTarget = chefPortrait;
+  chefSignalHoverHandler = handler;
+}
+
 function commitViewfinderPage(page, pushHistory) {
   const content = document.querySelector("[data-viewfinder-content]");
   const scroll = document.querySelector(".viewfinder__scroll");
@@ -1735,7 +1913,10 @@ function commitViewfinderPage(page, pushHistory) {
   scroll.scrollTop = 0;
   ui.currentRoute = page.url;
   setViewfinderMetadata(page);
-  requestAnimationFrame(warmArticleLinks);
+  requestAnimationFrame(() => {
+    warmArticleLinks();
+    bindChefSignalHover();
+  });
 
   if (pushHistory) {
     const target = new URL(page.url, window.location.href);
@@ -1816,6 +1997,7 @@ function revealViewfinderPage() {
 }
 
 function enterInlineViewfinder(page, pushHistory) {
+  clearChefSignalEffect();
   screenOverlay?.remove();
   screenOverlay = screenFromPage(page);
   container.appendChild(screenOverlay);
@@ -1834,7 +2016,10 @@ function enterInlineViewfinder(page, pushHistory) {
   layoutScreenOverlay();
   setViewfinderMetadata(page);
   revealViewfinderPage();
-  requestAnimationFrame(warmArticleLinks);
+  requestAnimationFrame(() => {
+    warmArticleLinks();
+    bindChefSignalHover();
+  });
 
   if (pushHistory) {
     const target = new URL(page.url, window.location.href);
@@ -1847,11 +2032,16 @@ function enterInlineViewfinder(page, pushHistory) {
   wakeLoop();
 }
 
-function leaveInlineViewfinder(pushHistory) {
+function removeViewfinderOverlay() {
   finishViewfinderReveal({ blankScreen: false });
+  clearChefSignalEffect();
   screenOverlay?.remove();
   screenOverlay = null;
   naturalRect = null;
+}
+
+function leaveInlineViewfinder(pushHistory) {
+  removeViewfinderOverlay();
 
   container.classList.remove("viewfinder", "camera-hero--zoomed");
   delete container.dataset.zoomed;
@@ -1921,6 +2111,7 @@ function startHomeReturnMotion() {
 
 function beginViewfinderExit(url, { pushHistory = true } = {}) {
   if (ui.navigating || zoom.state !== "idle") return;
+
   if (!ui.inlineShell) {
     try {
       sessionStorage.setItem("camera-skip-home-entry:v1", "1");
@@ -1929,16 +2120,18 @@ function beginViewfinderExit(url, { pushHistory = true } = {}) {
     }
   } else {
     // Reveal the homepage atmosphere while the camera is still pulling back.
-    // This bridges the old gap where the complete camera appeared first and
-    // the backdrop popped in only after the zoom animation had finished.
+    // The page overlay remains attached until the zoom completes so the dark
+    // LCD always covers the handoff and no white document frame can flash.
     startHomeReturnMotion();
   }
+
   finishViewfinderReveal({ blankScreen: false });
   pointer.x = 0;
   pointer.y = 0;
   pointer.targetX = 0;
   pointer.targetY = 0;
   hoverName = null;
+
   ui.pendingRoute = url;
   ui.pendingHistory = pushHistory;
   ui.pendingPagePromise = null;
@@ -2558,6 +2751,8 @@ function init() {
     cacheCurrentViewfinderPage();
   }
   reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  bindDishPriceInteraction();
+  bindChefSignalHover();
   warmViewfinderPages();
 
   try {

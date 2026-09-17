@@ -1,6 +1,6 @@
 <div
   class="resume-table-scene"
-  role="img"
+  role="group"
   aria-label="A top-down place setting with tempura shrimp, a fork, a knife, and two approaching hands."
 >
   <div class="resume-table-scene__tableau">
@@ -22,23 +22,41 @@
       >
     </picture>
 
-    <picture>
-      <source
-        srcset="{{ '/assets/img/resume-table/plate-tempura.webp' | relative_url }}"
-        type="image/webp"
-      >
-      <img
-        class="resume-table-scene__plate"
-        src="{{ '/assets/img/resume-table/plate-tempura.png' | relative_url }}"
-        alt=""
-        width="1362"
-        height="998"
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        draggable="false"
-      >
-    </picture>
+    <button
+      class="resume-table-scene__plate-control"
+      type="button"
+      data-dish-price-trigger
+      aria-expanded="false"
+      aria-controls="signature-dish-price"
+      aria-label="Reveal the price of the Shrimp Tempura"
+    >
+      <picture>
+        <source
+          srcset="{{ '/assets/img/resume-table/plate-tempura.webp' | relative_url }}"
+          type="image/webp"
+        >
+        <img
+          class="resume-table-scene__plate"
+          src="{{ '/assets/img/resume-table/plate-tempura.png' | relative_url }}"
+          alt=""
+          width="1362"
+          height="998"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          draggable="false"
+        >
+      </picture>
+      <span class="resume-table-scene__plate-scribble" aria-hidden="true">
+        <svg viewBox="0 0 130 90" preserveAspectRatio="none">
+          <path d="M4 45C3 17 31 4 67 6C103 3 128 19 126 45C127 70 99 85 65 82C30 86 5 70 4 45Z"></path>
+          <path d="M7 41C10 13 38 7 69 10C104 7 123 23 122 49C119 73 90 80 60 78C27 82 1 64 7 41Z"></path>
+          <path d="M1 48C-1 23 27 9 59 5C95 0 126 14 129 39C133 64 107 82 72 87C35 91 5 75 1 48Z"></path>
+          <path d="M10 46C5 20 28 12 62 11C97 7 120 19 125 43C129 66 101 77 68 80C37 83 13 69 10 46Z"></path>
+          <path d="M5 38C14 12 43 3 72 8C108 5 126 26 121 53C115 77 84 84 53 77C19 80-3 59 5 38Z"></path>
+        </svg>
+      </span>
+    </button>
 
     <picture>
       <source
@@ -111,5 +129,27 @@
         >
       </picture>
     </div>
+
+  </div>
+
+  <div
+    class="resume-table-scene__price-burst"
+    id="signature-dish-price"
+    data-dish-price
+    aria-hidden="true"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    $10,000
+  </div>
+</div>
+
+<div class="signature-dish" aria-labelledby="signature-dish-name">
+  <span class="signature-dish__label">Signature</span>
+  <div class="signature-dish__copy">
+    <h4 id="signature-dish-name">Shrimp Tempura</h4>
+    <p class="signature-dish__composition">
+      Shrimp · ice-cold batter · fried to order · tentsuyu
+    </p>
   </div>
 </div>
